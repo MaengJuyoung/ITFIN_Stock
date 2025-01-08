@@ -25,7 +25,8 @@ MainView = class MainView extends AView
 
 		//TODO:edit here
         
-        
+        const date = new Date();
+
         
 
 
@@ -43,8 +44,8 @@ MainView = class MainView extends AView
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
         
-        // stdt = '2024',  // 조회시작년도 
-        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json`;
+        const basDt = '20250107';  // 기준일자; 검색값과 기준일자가 일치하는 데이터를 검색 
+        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json&basDt=${basDt}`;
 
 
         console.log("searchType",searchType)
@@ -52,8 +53,6 @@ MainView = class MainView extends AView
             url += `&likeItmsNm=${searchText}`;
         }else if (searchType == '종목코드'){
             url += `&likeSrtnCd=${searchText}`;
-        }else {
-            url += `&likeSrtnCd=${searchText}&likeItmsNm=${searchText}`;
         }
 
         $.ajax({
@@ -90,6 +89,7 @@ MainView = class MainView extends AView
 
         if (tabId == 'home'){
             const grid = tab.view.grid;
+            grid.removeAll();
             const items = thisObj.data;
             console.log("items",items)
             for(var i = 0; i < items.length; i++){

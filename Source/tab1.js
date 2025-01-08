@@ -38,18 +38,20 @@ tab1 = class tab1 extends AView
 
     loadGrid(){
         const items = this.data;
-        console.log("items",items)
-        for(var i = 0; i < items.length; i++){
-                this.grid.addRow([
-                    items[i].basDt,
-                    items[i].itmsNm,
-                    items[i].mrktCtg,
-                    items[i].isinCd,
-                    items[i].corpNm,
-                    items[i].crno,
-                    items[i].srtnCd
-                ])
-            }
+        if (items){
+            console.log("items",items)
+            for(var i = 0; i < items.length; i++){
+                    this.grid.addRow([
+                        items[i].basDt,
+                        items[i].itmsNm,
+                        items[i].mrktCtg,
+                        items[i].isinCd,
+                        items[i].corpNm,
+                        items[i].crno,
+                        items[i].srtnCd
+                    ])
+                }
+        }
     }
 
 }
