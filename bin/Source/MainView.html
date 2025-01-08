@@ -1,4 +1,4 @@
-<div data-base="AView" data-class="MainView" class="AView-Style" style="left: 0px; top: 0px; width: 100%; height: auto; background-color: rgb(255, 255, 255); position: relative; min-width: 1080px;" data-browser-width="1580" data-browser-height="920" data-class-map="{&quot;afc&quot;:[&quot;AView&quot;,&quot;AButton&quot;,&quot;ASelectBox&quot;,&quot;ATextField&quot;,&quot;ATabView&quot;,&quot;ALabel&quot;]}"
+<div data-base="AView" data-class="MainView" class="AView-Style" style="left: 0px; top: 0px; width: 100%; height: 100%; background-color: rgb(255, 255, 255); position: relative; min-width: 1080px; font-family: &quot;맑은 고딕&quot;;" data-browser-width="1580" data-browser-height="920" data-class-map="{&quot;afc&quot;:[&quot;AView&quot;,&quot;AButton&quot;,&quot;ASelectBox&quot;,&quot;ATextField&quot;,&quot;ATabView&quot;,&quot;ALabel&quot;]}"
     ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: auto; position: relative; left: 0px; background-color: rgba(0, 0, 0, 0); border-bottom-style: outset; border-bottom-color: rgb(0, 0, 255); margin-bottom: 20px;" id="MainView--header"
         ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 80px; height: 50px; position: relative; background-color: rgba(0, 0, 0, 0); background-image: url(&quot;Assets/itfin_logo.png&quot;); background-size: contain; background-repeat: no-repeat; background-position: center center; margin-left: 20px;" id="MainView--logo" data-background-option="fit"></button
         ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 700px; height: 50px; position: relative; background-color: rgba(0, 0, 0, 0); margin: 0px auto; border-color: rgb(0, 0, 255); display: flex;" id="MainView--searchArea"
@@ -11,15 +11,15 @@
             ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 80px; height: 50px; position: relative; background-color: rgb(0, 0, 255); color: rgb(255, 255, 255); font-size: 15px; border-radius: 5px;">검색</button
         ></div
     ></div
-    ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; position: relative; height: 620px; background-color: rgba(0, 0, 0, 0); border-color: rgb(217, 217, 217); margin-bottom: 20px; left: 0px;" id="MainView--container"
+    ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; position: relative; height: calc((100% - 0px) - 255px); background-color: rgba(0, 0, 0, 0); border-color: rgb(217, 217, 217); margin-bottom: 20px; left: 0px; top: 0px;" id="MainView--container" data-sgap-height="1"
         ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 50px; position: relative; background-color: rgba(0, 0, 0, 0); border-top-width: 1px; border-bottom-width: 1px; border-top-color: rgb(217, 217, 217); border-bottom-color: rgb(217, 217, 217); left: 0px; margin-bottom: 20px;" id="MainView--menu"
             ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 980px; height: 50px; margin: 0px auto; position: relative; background-color: rgba(0, 0, 0, 0); font-family: &quot;맑은 고딕&quot;;" id="MainView--menuGroup"
-                ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 100px; height: 50px; position: relative; margin-left: 0px; margin-top: 0px; background-color: rgba(0, 0, 0, 0); font-size: 15px; font-weight: bold;">HOME</button
-                ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 100px; height: 50px; position: relative; margin-left: 0px; margin-top: 0px; background-color: rgba(0, 0, 0, 0); font-size: 15px; font-weight: bold;">MY</button
+                ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 100px; height: 50px; position: relative; margin-left: 0px; margin-top: 0px; background-color: rgba(0, 0, 0, 0); font-size: 15px; font-weight: bold;" id="MainView--home" data-listener-click="MainView:onTabClick">HOME</button
+                ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 100px; height: 50px; position: relative; margin-left: 0px; margin-top: 0px; background-color: rgba(0, 0, 0, 0); font-size: 15px; font-weight: bold;" id="MainView--my" data-listener-click="MainView:onTabClick">MY</button
             ></div
         ></div
-        ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 980px; height: 550px; position: relative; margin: 0px auto; background-color: rgba(0, 0, 0, 0);" id="MainView--inner"
-            ><div data-base="ATabView" data-class="ATabView" class="ATabView-Style" data-state="0" style="width: 100%; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0);" data-tab-select="tab1" data-tabinfo-tab1="tab1,home,Source/Sub/tab1.lay,0" data-tabinfo-tab2="tab2,my,Source/Sub/tab2.lay,1"
+        ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 980px; height: calc((100% - 0px) - 90px); position: relative; margin: 0px auto; background-color: rgba(0, 0, 0, 0); top: 0px; left: 0px;" id="MainView--inner" data-sgap-height="1"
+            ><div data-base="ATabView" data-class="ATabView" class="ATabView-Style" data-state="0" style="width: 100%; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0);" data-tab-select="tab1" id="MainView--tab" data-tabinfo-home="home,home,Source/Sub/tab1.lay,0" data-tabinfo-my="my,my,Source/Sub/tab2.lay,1"
                 ><div class="tab_area" style="display: none;"
                     ><span class="ATabView_select">tab1</span
                     ><span class="ATabView_deselect">tab2</span
@@ -29,7 +29,7 @@
             ></div
         ></div
     ></div
-    ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: auto; position: relative; left: 0px; background-color: rgba(0, 0, 0, 0); border-top: 1px solid rgb(217, 217, 217);" id="MainView--footer"
+    ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: auto; position: absolute; left: 0px; background-color: rgba(0, 0, 0, 0); border-top: 1px solid rgb(217, 217, 217); bottom: 0px;" id="MainView--footer"
         ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 980px; height: auto; margin: 0px auto; position: relative; background-color: rgba(0, 0, 0, 0); padding-top: 20px; padding-bottom: 20px; top: 0px;"
             ><div data-base="AView" data-class="AView" class="AView-Style" style="width: auto; left: 0px; position: relative; height: 20px; margin-bottom: 20px; background-color: rgba(0, 0, 0, 0); text-align: center;"
                 ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: auto; height: 100%; position: relative; top: 0px; font-size: 12px; line-height: 20px;">이용약관</label
