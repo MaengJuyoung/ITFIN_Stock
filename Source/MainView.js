@@ -14,7 +14,8 @@ MainView = class MainView extends AView
 		super.init(context, evtListener)
 
 		//TODO:edit here
-        this.data = ''
+        this.data = '';
+        // this.getItemInfo();
 
 	}
 
@@ -23,8 +24,8 @@ MainView = class MainView extends AView
 		super.onInitDone()
 
 		//TODO:edit here
-        this.getItemInfo();
-        this.tab.selectTabById('home');
+        
+        
         
 
 
@@ -38,20 +39,39 @@ MainView = class MainView extends AView
 
 	}
 
-    getItemInfo(){
-        const thisObj = this, 
-        serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D', // 일반 인증키
-        stdt = '2024',  // 조회시작년도 
-        url = 'https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=' + serviceKey + '&numOfRows=100&pageNo=1&resultType=json';
+    getItemInfo(searchType='', searchText=''){
+        const thisObj = this;
+        const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
+        
+        // stdt = '2024',  // 조회시작년도 
+        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json`;
+
+
+        console.log("searchType",searchType)
+        if (searchType == '종목명'){
+            url += `&likeItmsNm=${searchText}`;
+        }else if (searchType == '종목코드'){
+            url += `&likeSrtnCd=${searchText}`;
+        }else {
+            url += `&likeSrtnCd=${searchText}&likeItmsNm=${searchText}`;
+        }
 
         $.ajax({
             type: 'GET',
             url: url,
             success: function(result){
                 thisObj.data = result.response.body.items.item;
+                console.log("url=",url);
+
                 console.log("result=",thisObj.data);
+
+            },
+            error: function(error){
+                console.error(error);
             }
+            
         })
+        
     }
 
 
@@ -74,13 +94,13 @@ MainView = class MainView extends AView
             console.log("items",items)
             for(var i = 0; i < items.length; i++){
                 grid.addRow([
-                    items[i].basDt,
-                    items[i].itmsNm,
-                    items[i].mrktCtg,
-                    items[i].isinCd,
-                    items[i].corpNm,
-                    items[i].crno,
-                    items[i].srtnCd
+                    items[i].basDt,     // 기준일자
+                    items[i].itmsNm,    // 종목명
+                    items[i].mrktCtg,   // 시장구분
+                    items[i].isinCd,    // ISIN코드
+                    items[i].corpNm,    // 법인명
+                    items[i].crno,      // 법인등록번호
+                    items[i].srtnCd     // 단축코드
                 ])
             }
         }
@@ -88,5 +108,14 @@ MainView = class MainView extends AView
 	}
 
 
+
+	onSearchClick(comp, info, e)
+	{
+        const thisObj = this;
+        const searchType = thisObj.searchType.getSelectedItemText();
+        const searchText = thisObj.searchText.getText();
+
+        thisObj.getItemInfo(searchType,searchText);
+	}
 }
 

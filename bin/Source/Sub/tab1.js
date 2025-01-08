@@ -14,6 +14,8 @@ tab1 = class tab1 extends AView
 		super.init(context, evtListener)
 
 		//TODO:edit here
+        console.log("getContainerView",this.getContainerView());
+        this.data = this.getContainerView().data;
 
 	}
 
@@ -22,6 +24,7 @@ tab1 = class tab1 extends AView
 		super.onInitDone()
 
 		//TODO:edit here
+        this.loadGrid();
 
 	}
 
@@ -32,6 +35,22 @@ tab1 = class tab1 extends AView
 		//TODO:edit here
 
 	}
+
+    loadGrid(){
+        const items = this.data;
+        console.log("items",items)
+        for(var i = 0; i < items.length; i++){
+                this.grid.addRow([
+                    items[i].basDt,
+                    items[i].itmsNm,
+                    items[i].mrktCtg,
+                    items[i].isinCd,
+                    items[i].corpNm,
+                    items[i].crno,
+                    items[i].srtnCd
+                ])
+            }
+    }
 
 }
 
