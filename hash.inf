@@ -1,6 +1,6 @@
 {
 	"changed": [
-		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\Sub\\tab1.html"
+		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\Sub\\tab1.js"
 	],
 	"version": "4.1.3",
 	"C:\\Users\\IT_98\\AppData\\Local\\Programs\\SpiderGen4\\resources\\app\\bin\\Runner\\SpiderServer\\..\\..\\Framework\\afc\\library\\jquery-core.js": 1720750564000,
@@ -189,13 +189,13 @@
 	"C:\\Users\\IT_98\\AppData\\Local\\Programs\\SpiderGen4\\resources\\app\\bin\\Runner\\SpiderServer\\..\\..\\Framework\\afc\\style\\jquery-ui.css": 1720750564000,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Assets\\itfin_logo.png": 1736308327823.2195,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\stock_mjyApp.js": 1736299103554.115,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.js": 1736389113138.4785,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.js": 1736410577302.9856,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Resource\\common.json": 1736299103508.6333,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Template\\stock_mjyApp_global.stl": 1736299103560.5857,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.lay": 1736386762861.3154,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.lay": 1736409239558.8772,
 	"concat": true,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab1.js": 1736389025933.004,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab1.js": 1736410614143.2966,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab2.js": 1736313477022.928,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab1.lay": 1736389625957.1184,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab1.lay": 1736404156586.504,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab2.lay": 1736320316265.267
 }

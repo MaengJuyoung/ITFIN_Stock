@@ -10,9 +10,10 @@ MainView = class MainView extends AView
 	{
 		super.init(context, evtListener)
 
-        this.data = '';
+        this.data = {};
         this.contiKey = '';
         this.getItemInfo();
+
 	}
 
 	onInitDone()
@@ -29,10 +30,18 @@ MainView = class MainView extends AView
 	onSearchClick(comp, info, e)
 	{
         const thisObj = this;
+        
         const searchType = thisObj.searchType.getSelectedItemText();
         const searchText = thisObj.searchText.getText();
 
-        thisObj.getItemInfo(searchType,searchText);
+        const tabId = thisObj.tab.getSelectedTab().innerText;
+        if (tabId == 'home'){
+            // home에 전달하기 위한 전역 변수 저장
+            thisObj.data.searchType = searchType;
+            thisObj.data.searchText = searchText;
+            
+            thisObj.getItemInfo(searchType, searchText);
+        }
 	}
 
     // 검색창 입력 후 엔터 클릭 시 
@@ -49,22 +58,20 @@ MainView = class MainView extends AView
 
         thisObj.tab.selectTabById(tabId);   
 
-        // home 탭 클릭 시, radioBtn 초기화 
-        if (tabId == 'home'){
-            const homeTab = thisObj.tab.getSelectedView();
-            homeTab.beginBasDt.selectBtnByValue(0);
-            homeTab.mrktCtg.selectBtnByValue(0);
-            homeTab.numOfRows.selectItemByValue(0);
-        }
+        // 검색창 초기화
+        thisObj.searchText.setText('');
+        thisObj.data.searchType = '';
+        thisObj.data.searchText = '';
+
+        if (tabId == 'home') thisObj.getItemInfo();
         
-        thisObj.addDataAtGrid(tabId);
 	}
 
     // API 통신 로직
     getItemInfo(searchType='', searchText=''){
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
-        const beginBasDt = '20250101';  // 기준일자; 기준일자가 검색값보다 크거나 같은 데이터를 검색 
+        const beginBasDt = '20241101';
 
         let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json&beginBasDt=${beginBasDt}`;
         if (searchType == '종목명'){
@@ -77,11 +84,9 @@ MainView = class MainView extends AView
             type: 'GET',
             url: url,
             success: function(result){
-                thisObj.data = result.response.body.items.item;
+                thisObj.data.items = result.response.body.items.item;
                 if (thisObj.tab.getSelectedTab()){  
-                    const tabId = thisObj.tab.getSelectedTab().innerText;
-                    thisObj.addDataAtGrid(tabId);
-
+                    thisObj.addDataAtGrid();
                 }
             },
             error: function(error){
@@ -91,23 +96,24 @@ MainView = class MainView extends AView
     }
 
     // 그리드에 데이터 추가 로직
-    addDataAtGrid(tabId, contiKey=''){
+    addDataAtGrid(){
         const thisObj = this;
 
-        const tab = this.tab.getSelectedTab();
+        const tab = thisObj.tab.getSelectedTab();
+        // home에서 그리드 로드 시, 기본값 설정
+        const homeTab = tab.view;
+        homeTab.beginBasDt.selectBtnByValue(0);
+        homeTab.numOfRows.selectItemByValue(100);
+        homeTab.contiKey.element.style.display = 'block';
         
-
-        if (tabId == 'home'){
-            const grid = tab.view.grid;
-            grid.removeAll();           // contiKey 받지 않을 시에만
-            const items = thisObj.data;
-            //console.log("items",items)
-            for(var i = 0; i < items.length; i++){
-                grid.addRow([   // 기준일자, 종목명, 시장구분, ISIN코드, 법인명, 법인등록번호, 단축코드
-                    items[i].basDt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'), 
-                    items[i].itmsNm, items[i].mrktCtg, items[i].isinCd, items[i].corpNm, items[i].crno, items[i].srtnCd 
-                ])
-            }
+        const grid = tab.view.grid;
+        grid.removeAll();           
+        const items = thisObj.data.items;
+        for(var i = 0; i < items.length; i++){
+            grid.addRow([   // 기준일자, 종목명, 시장구분, ISIN코드, 법인명, 법인등록번호, 단축코드
+                items[i].basDt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'), 
+                items[i].itmsNm, items[i].mrktCtg, items[i].isinCd, items[i].corpNm, items[i].crno, items[i].srtnCd 
+            ])
         }
     }
 }
