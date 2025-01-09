@@ -14,9 +14,10 @@ tab1 = class tab1 extends AView
 		super.init(context, evtListener)
 
 		//TODO:edit here
-        console.log("getContainerView",this.getContainerView());
+        //console.log("getContainerView",this.getContainerView());
         this.data = this.getContainerView().data;
         this.numOfRows.selectItemByValue(0);
+
 
 	}
 
@@ -25,14 +26,13 @@ tab1 = class tab1 extends AView
 		super.onInitDone()
 
 		//TODO:edit here
-        this.loadGrid();
+        //this.loadGrid();
 
 	}
 
 	onActiveDone(isFirst)
 	{
 		super.onActiveDone(isFirst)
-
 		//TODO:edit here
 
 	}

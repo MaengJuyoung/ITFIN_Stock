@@ -35,18 +35,28 @@ MainView = class MainView extends AView
         thisObj.getItemInfo(searchType,searchText);
 	}
 
+    // 검색창 입력 후 엔터 클릭 시 
+    onSearchTextKeyup(comp, info, e)
+	{
+        if ( e.key === 'Enter' ) this.onSearchClick();
+	}
+
     // 탭 메뉴 선택 시 
 	onTabClick(comp, info, e)
 	{
         const thisObj = this;
         const tabId = comp.compId;
 
-        thisObj.tab.selectTabById(tabId);
-        console.log("탭 id = ",tabId);
+        thisObj.tab.selectTabById(tabId);   
 
-        thisObj.addDataAtGrid(tabId);
+        // home 탭 클릭 시, radioBtn 초기화 
+        if (tabId == 'home'){
+            const homeTab = thisObj.tab.getSelectedView();
+            homeTab.beginBasDt.selectBtnByValue(0);
+            homeTab.mrktCtg.selectBtnByValue(0);
+        }
         
-
+        thisObj.addDataAtGrid(tabId);
 	}
 
     // API 통신 로직
@@ -91,7 +101,7 @@ MainView = class MainView extends AView
             const grid = tab.view.grid;
             grid.removeAll();           // contiKey 받지 않을 시에만
             const items = thisObj.data;
-            console.log("items",items)
+            //console.log("items",items)
             for(var i = 0; i < items.length; i++){
                 grid.addRow([   // 기준일자, 종목명, 시장구분, ISIN코드, 법인명, 법인등록번호, 단축코드
                     items[i].basDt, items[i].itmsNm, items[i].mrktCtg, items[i].isinCd, items[i].corpNm, items[i].crno, items[i].srtnCd 

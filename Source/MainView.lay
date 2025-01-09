@@ -6,7 +6,7 @@
                 ><option value="0">종목명</option
                 ><option value="1">종목코드</option
             ></select
-            ><input data-base="ATextField" data-class="ATextField" type="text" value="" class="ATextField-Style" autocomplete="off" style="width: 500px; height: 50px; position: relative; font-size: 15px; margin-right: 10px; border-radius: 5px; border-color: rgb(217, 217, 217); border-width: 1px; margin-left: 0px;" placeholder="종목명 또는 종목코드를 입력해주세요. " id="MainView--searchText"
+            ><input data-base="ATextField" data-class="ATextField" type="text" value="" class="ATextField-Style" autocomplete="off" style="width: 500px; height: 50px; position: relative; font-size: 15px; margin-right: 10px; border-radius: 5px; border-color: rgb(217, 217, 217); border-width: 1px; margin-left: 0px;" placeholder="종목명 또는 종목코드를 입력해주세요. " id="MainView--searchText" data-listener-keyup="MainView:onSearchTextKeyup"
             ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 80px; height: 50px; position: relative; background-color: rgb(0, 0, 255); color: rgb(255, 255, 255); font-size: 15px; border-radius: 5px; margin-left: 0px; margin-top: 0px;" id="MainView--search" data-listener-click="MainView:onSearchClick">검색</button
         ></div
     ></div
