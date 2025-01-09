@@ -54,6 +54,7 @@ MainView = class MainView extends AView
             const homeTab = thisObj.tab.getSelectedView();
             homeTab.beginBasDt.selectBtnByValue(0);
             homeTab.mrktCtg.selectBtnByValue(0);
+            homeTab.numOfRows.selectItemByValue(0);
         }
         
         thisObj.addDataAtGrid(tabId);
@@ -63,10 +64,9 @@ MainView = class MainView extends AView
     getItemInfo(searchType='', searchText=''){
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
-        
         const beginBasDt = '20250101';  // 기준일자; 기준일자가 검색값보다 크거나 같은 데이터를 검색 
-        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json&beginBasDt=${beginBasDt}`;
 
+        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json&beginBasDt=${beginBasDt}`;
         if (searchType == '종목명'){
             url += `&likeItmsNm=${searchText}`;
         }else if (searchType == '종목코드'){
@@ -104,7 +104,8 @@ MainView = class MainView extends AView
             //console.log("items",items)
             for(var i = 0; i < items.length; i++){
                 grid.addRow([   // 기준일자, 종목명, 시장구분, ISIN코드, 법인명, 법인등록번호, 단축코드
-                    items[i].basDt, items[i].itmsNm, items[i].mrktCtg, items[i].isinCd, items[i].corpNm, items[i].crno, items[i].srtnCd 
+                    items[i].basDt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'), 
+                    items[i].itmsNm, items[i].mrktCtg, items[i].isinCd, items[i].corpNm, items[i].crno, items[i].srtnCd 
                 ])
             }
         }

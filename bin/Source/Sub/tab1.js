@@ -43,7 +43,7 @@ tab1 = class tab1 extends AView
             console.log("items",items)
             for(var i = 0; i < items.length; i++){
                     this.grid.addRow([
-                        items[i].basDt,
+                        items[i].basDt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
                         items[i].itmsNm,
                         items[i].mrktCtg,
                         items[i].isinCd,
