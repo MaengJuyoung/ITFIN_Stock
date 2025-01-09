@@ -16,6 +16,7 @@ tab1 = class tab1 extends AView
 		//TODO:edit here
         console.log("getContainerView",this.getContainerView());
         this.data = this.getContainerView().data;
+        this.numOfRows.selectItemByValue(0);
 
 	}
 

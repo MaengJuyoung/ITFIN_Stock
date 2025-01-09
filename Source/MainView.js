@@ -4,51 +4,59 @@ MainView = class MainView extends AView
 	constructor()
 	{
 		super()
-
-		//TODO:edit here
-
 	}
 
 	init(context, evtListener)
 	{
 		super.init(context, evtListener)
 
-		//TODO:edit here
         this.data = '';
-        // this.getItemInfo();
-
+        this.contiKey = '';
+        this.getItemInfo();
 	}
 
 	onInitDone()
 	{
 		super.onInitDone()
-
-		//TODO:edit here
-        
-        const date = new Date();
-
-        
-
-
 	}
 
 	onActiveDone(isFirst)
 	{
 		super.onActiveDone(isFirst)
+	}
 
-		//TODO:edit here
+    // 검색 버튼 클릭 시 
+	onSearchClick(comp, info, e)
+	{
+        const thisObj = this;
+        const searchType = thisObj.searchType.getSelectedItemText();
+        const searchText = thisObj.searchText.getText();
+
+        thisObj.getItemInfo(searchType,searchText);
+	}
+
+    // 탭 메뉴 선택 시 
+	onTabClick(comp, info, e)
+	{
+        const thisObj = this;
+        const tabId = comp.compId;
+
+        thisObj.tab.selectTabById(tabId);
+        console.log("탭 id = ",tabId);
+
+        thisObj.addDataAtGrid(tabId);
+        
 
 	}
 
+    // API 통신 로직
     getItemInfo(searchType='', searchText=''){
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
         
-        const basDt = '20250107';  // 기준일자; 검색값과 기준일자가 일치하는 데이터를 검색 
-        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json&basDt=${basDt}`;
+        const beginBasDt = '20250101';  // 기준일자; 기준일자가 검색값보다 크거나 같은 데이터를 검색 
+        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json&beginBasDt=${beginBasDt}`;
 
-
-        console.log("searchType",searchType)
         if (searchType == '종목명'){
             url += `&likeItmsNm=${searchText}`;
         }else if (searchType == '종목코드'){
@@ -60,62 +68,36 @@ MainView = class MainView extends AView
             url: url,
             success: function(result){
                 thisObj.data = result.response.body.items.item;
-                console.log("url=",url);
+                if (thisObj.tab.getSelectedTab()){  
+                    const tabId = thisObj.tab.getSelectedTab().innerText;
+                    thisObj.addDataAtGrid(tabId);
 
-                console.log("result=",thisObj.data);
-
+                }
             },
             error: function(error){
                 console.error(error);
             }
-            
         })
-        
     }
 
-
-
-	onTabClick(comp, info, e)
-	{
+    // 그리드에 데이터 추가 로직
+    addDataAtGrid(tabId, contiKey=''){
         const thisObj = this;
-        const tabId = comp.compId;
-
-        thisObj.tab.selectTabById(tabId);
-        console.log("탭 id = ",tabId);
-
 
         const tab = this.tab.getSelectedTab();
         
 
         if (tabId == 'home'){
             const grid = tab.view.grid;
-            grid.removeAll();
+            grid.removeAll();           // contiKey 받지 않을 시에만
             const items = thisObj.data;
             console.log("items",items)
             for(var i = 0; i < items.length; i++){
-                grid.addRow([
-                    items[i].basDt,     // 기준일자
-                    items[i].itmsNm,    // 종목명
-                    items[i].mrktCtg,   // 시장구분
-                    items[i].isinCd,    // ISIN코드
-                    items[i].corpNm,    // 법인명
-                    items[i].crno,      // 법인등록번호
-                    items[i].srtnCd     // 단축코드
+                grid.addRow([   // 기준일자, 종목명, 시장구분, ISIN코드, 법인명, 법인등록번호, 단축코드
+                    items[i].basDt, items[i].itmsNm, items[i].mrktCtg, items[i].isinCd, items[i].corpNm, items[i].crno, items[i].srtnCd 
                 ])
             }
         }
-
-	}
-
-
-
-	onSearchClick(comp, info, e)
-	{
-        const thisObj = this;
-        const searchType = thisObj.searchType.getSelectedItemText();
-        const searchText = thisObj.searchText.getText();
-
-        thisObj.getItemInfo(searchType,searchText);
-	}
+    }
 }
 
