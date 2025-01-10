@@ -22,7 +22,7 @@
             ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 80px; height: 50px; position: relative; background-color: rgb(0, 0, 255); color: rgb(255, 255, 255); font-size: 15px; border-radius: 5px; float: right; margin-left: 10px;" id="tab1--contiKey" data-listener-click="tab1:onContiKeyClick">다음</button
             ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 80px; height: 50px; position: relative; background-color: rgb(0, 0, 255); color: rgb(255, 255, 255); font-size: 15px; border-radius: 5px; float: right;" id="tab1--tabBtn" data-listener-click="tab1:onTabBtnClick">조회</button
         ></div
-        ><div data-base="AGrid" data-class="AGrid" data-selectable="true" data-clear-rowtmpl="true" data-ver="3301" class="AGrid-Style" data-hide-footer="true" style="width: 100%; height: calc((100% - 0px) - 60px); position: relative; left: 0px; top: 0px; visibility: visible;" data-sgap-height="1" id="tab1--grid" data-fullrow-select="true"
+        ><div data-base="AGrid" data-class="AGrid" data-selectable="true" data-clear-rowtmpl="true" data-ver="3301" class="AGrid-Style" data-hide-footer="true" style="width: 100%; height: calc((100% - 0px) - 60px); position: relative; left: 0px; top: 0px; visibility: visible;" data-sgap-height="1" id="tab1--grid" data-fullrow-select="true" data-listener-scrollbottom="tab1:onGridScrollbottom" data-listener-select="tab1:onGridSelect"
             ><div class="grid-scroll-area" style=""
                 ><table class="grid-header-table" align="center"
                     ><colgroup
@@ -34,7 +34,7 @@
                         ><col width="120"
                         ><col width="90"
                     ></colgroup
-                    ><thead align="center" class="head-prop" style=""
+                    ><thead align="center" class="head-prop" style="display: table-header-group;"
                         ><tr height="30" style="background-color: rgb(150, 180, 255);"
                             ><td class="" style="border-color: rgb(255, 255, 255) rgb(255, 255, 255) rgb(150, 180, 255); border-style: solid; border-width: 1px; font-size: 15px;">기준일자</td
                             ><td class="" style="border-color: rgb(255, 255, 255) rgb(255, 255, 255) rgb(150, 180, 255); border-style: solid; border-width: 1px; font-size: 15px;">종목명</td

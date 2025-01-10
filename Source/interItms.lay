@@ -1,0 +1,26 @@
+<div data-base="AView" data-class="interItms" class="AView-Style" style="left: 0px; top: 0px; width: 300px; height: 400px; background-color: rgba(255, 255, 255, 0.9); border-width: 1px; border-color: rgb(0, 0, 255); border-radius: 5px; position: relative; font-family: &quot;맑은 고딕&quot;;" data-class-map="{&quot;afc&quot;:[&quot;AView&quot;,&quot;AButton&quot;,&quot;ALabel&quot;,&quot;ASelectBox&quot;]}"
+    ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 40px; position: relative; top: 0px; left: 0px; background-color: rgba(0, 0, 0, 0);" id="interItms--header"
+        ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 40px; height: 40px; position: relative; float: right; font-size: 40px; line-height: 40px; background-color: rgba(0, 0, 0, 0);">×</button
+    ></div
+    ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; position: relative; left: 0px; height: 300px; background-color: rgba(0, 0, 0, 0);"
+        ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 150px; position: relative; left: 0px; background-color: rgba(0, 0, 0, 0);"
+            ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 100%; height: 70px; position: relative; font-size: 30px; text-align: center; line-height: 50px; font-weight: bold; color: rgb(0, 0, 255);" id="interItms--itmsNm">Label</label
+            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 40px; position: relative; background-color: rgba(0, 0, 0, 0); padding: 10px 50px;"
+                ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 80px; height: 20px; position: relative; font-size: 15px; line-height: 20px; font-weight: bold;">시장 구분</label
+                ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 80px; height: 20px; position: relative; font-size: 15px; line-height: 20px;" id="interItms--mrktCtg">시장 구분</label
+            ></div
+            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 40px; position: relative; background-color: rgba(0, 0, 0, 0); padding: 10px 50px;"
+                ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 80px; height: 20px; position: relative; font-size: 15px; line-height: 20px; font-weight: bold;">단축 코드</label
+                ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 80px; height: 20px; position: relative; font-size: 15px; line-height: 20px;" id="interItms--srtnCd">시장 구분</label
+            ></div
+        ></div
+        ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 150px; position: relative; background-color: rgba(0, 0, 0, 0);"
+            ><select data-base="ASelectBox" data-class="ASelectBox" class="ASelectBox-Style" style="width: 200px; height: 30px; position: relative; margin-left: 50px;"
+                ><option value="value1">item1</option
+            ></select
+        ></div
+    ></div
+    ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 60px; position: relative; background-color: rgba(0, 0, 0, 0);"
+        ><div data-base="AView" data-class="AView" class="AView-Style" style="height: 100%; position: relative; width: 170px; margin: 0px auto; background-color: rgba(0, 0, 0, 0);"></div
+    ></div
+></div>

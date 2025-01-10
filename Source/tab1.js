@@ -56,8 +56,8 @@ tab1 = class tab1 extends AView
         const searchText = thisObj.getContainerView().data.searchText;
 
         const today = new Date();
-        if (beginBasDt == '0') today.setMonth(today.getMonth() - 3);        // 세 달 전 날짜 계산
-        else if (beginBasDt == '1') today.setDate(today.getDate() - 1);     // 하루 전 날짜 계산
+        if (beginBasDt == '0') today.setMonth(today.getMonth() - 3);        // (전체) 세 달 전 날짜 계산
+        else if (beginBasDt == '1') today.setDate(today.getDate() - 2);     // 이틀 전 날짜 계산
         else if (beginBasDt == '2') today.setDate(today.getDate() - 7);     // 일주일 전 날짜 계산
         else if (beginBasDt == '3') today.setMonth(today.getMonth() - 1);   // 한 달 전 날짜 계산
         beginBasDt = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;   
@@ -98,5 +98,41 @@ tab1 = class tab1 extends AView
             }
         }
     }
+
+    // 그리드 스크롤 끝까지 내려가면 자동 조회 
+	onGridScrollbottom(comp, info, e)
+	{
+        this.onContiKeyClick();
+	}
+
+    // 그리드 선택 시 관심 종목 추가 창 열기 
+	onGridSelect(comp, info, e)
+	{
+        const thisObj = this;
+        const index = thisObj.grid.getRowIndexByInfo(info);
+        if (index == -1) return;
+
+        const data = thisObj.grid.getDataByOption(info);
+        const interdata = { itmsNm: data[1], mrktCtg: data[2], srtnCd: data[6] }
+        this.openDialog(interdata);
+
+	}
+
+    openDialog(data = null) {
+    const wnd = new AWindow(`관심종목`);
+    wnd.setWindowOption({ 
+        isCenter : false,        //화면 가운데 위치 여부 
+        isFocusLostClose : true,    //윈도우 밖의 화면 클릭시 닫히는 여부 
+        isDraggable: true,         //윈도우 창을 드래그로 움직이게 할지
+    }); 
+    wnd.openAsDialog('Source/Sub/interItms.lay', this.getContainer());
+
+    wnd.setData(data);
+    wnd.setResultCallback(result => {
+		if (result) {
+			console.log("result=",result)
+		}
+	});
+}
 }
 
