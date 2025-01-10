@@ -1,6 +1,6 @@
 {
 	"changed": [
-		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\MainView.js"
+		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\MainView.html"
 	],
 	"version": "4.1.3",
 	"C:\\Users\\IT_98\\AppData\\Local\\Programs\\SpiderGen4\\resources\\app\\bin\\Runner\\SpiderServer\\..\\..\\Framework\\afc\\library\\jquery-core.js": 1720750564000,
@@ -192,7 +192,7 @@
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.js": 1736470650541.09,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Resource\\common.json": 1736299103508.6333,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Template\\stock_mjyApp_global.stl": 1736299103560.5857,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.lay": 1736470073931.541,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.lay": 1736470752177.0771,
 	"concat": true,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab1.js": 1736465617410.3042,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab2.js": 1736313477022.928,
