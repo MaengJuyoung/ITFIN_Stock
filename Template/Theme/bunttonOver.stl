@@ -1,0 +1,7 @@
+{
+  "styleName": "bunttonOver",
+  "items": {
+    "edit_here": "\r\n.edit_here\r\n{\r\n\t/* TODO:edit here */\r\n\r\n}\r\n",
+    "my :over": ".over{}\r\n.my :over\r\n{\r\n\ttext-decoration-line: underline;\r\n\ttext-decoration-style: solid;\r\n\ttext-decoration-color: rgb(0, 0, 255);\r\n}\r\n\r\n.home :\r\n{\r\n\ttext-decoration-line: underline;\r\n\ttext-decoration-style: solid;\r\n\ttext-decoration-color: rgb(0, 0, 255);\r\n}"
+  }
+}

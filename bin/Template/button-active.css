@@ -1,0 +1,13 @@
+
+.edit_here
+{
+	/* TODO:edit here */
+
+	text-decoration-line: underline !important;
+	text-decoration-color: rgb(0, 0, 255) !important;
+	color: rgb(0, 0, 255) !important;
+	font-weight: bold !important;
+	font-size: 15px !important;
+	font-family: 맑은고딕 !important;
+}
+

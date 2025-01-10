@@ -98,9 +98,5 @@ tab1 = class tab1 extends AView
             }
         }
     }
-
-	
-
-	
 }
 

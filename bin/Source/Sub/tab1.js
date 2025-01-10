@@ -73,7 +73,7 @@ tab1 = class tab1 extends AView
             type: 'GET',
             url: url,
             success: function(result){
-                console.log("result=",result.response.body)
+                console.log("result=",result.response.body);
 
                 thisObj.data = result.response.body.items.item;
                 if (thisObj.data.length < numOfRows || result.response.body.totalCount == numOfRows) thisObj.contiKey.element.style.display = 'none';   // 불러올 데이터가 없으면 다음 버튼 숨기기
@@ -98,9 +98,5 @@ tab1 = class tab1 extends AView
             }
         }
     }
-
-	
-
-	
 }
 

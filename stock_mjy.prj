@@ -31,13 +31,30 @@
           {
             "type": 1,
             "name": "Theme",
-            "children": []
+            "children": [
+              {
+                "type": 4,
+                "name": "bunttonOver.stl",
+                "action": 8,
+                "relType": 1,
+                "path": "Template\\Theme\\",
+                "comment": ""
+              }
+            ]
           },
           {
             "type": 4,
             "name": "stock_mjyApp_global.stl",
             "relType": 1,
             "path": "Template\\"
+          },
+          {
+            "type": 4,
+            "name": "button-active.stl",
+            "action": 8,
+            "relType": 1,
+            "path": "Template\\",
+            "comment": ""
           }
         ]
       },

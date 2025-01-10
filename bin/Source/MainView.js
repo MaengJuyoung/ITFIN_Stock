@@ -13,7 +13,7 @@ MainView = class MainView extends AView
         this.data = {};
         this.contiKey = '';
         this.getItemInfo();
-
+        this.home.element.style.color = 'blue';
 	}
 
 	onInitDone()
@@ -55,6 +55,15 @@ MainView = class MainView extends AView
 	{
         const thisObj = this;
         const tabId = comp.compId;
+
+        if (tabId == thisObj.home.compId){
+            comp.element.style.color = 'blue';
+            thisObj.my.element.style.color = 'black';
+        }else {
+            comp.element.style.color = 'blue';
+            thisObj.home.element.style.color = 'black';
+        }
+
 
         thisObj.tab.selectTabById(tabId);   
 

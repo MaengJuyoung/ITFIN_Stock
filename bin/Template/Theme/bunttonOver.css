@@ -1,0 +1,22 @@
+
+.edit_here
+{
+	/* TODO:edit here */
+
+}
+
+.over{}
+.my :over
+{
+	text-decoration-line: underline !important;
+	text-decoration-style: solid !important;
+	text-decoration-color: rgb(0, 0, 255) !important;
+}
+
+.home :
+{
+	text-decoration-line: underline !important;
+	text-decoration-style: solid !important;
+	text-decoration-color: rgb(0, 0, 255) !important;
+}
+

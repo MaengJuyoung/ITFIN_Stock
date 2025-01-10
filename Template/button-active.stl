@@ -1,0 +1,6 @@
+{
+  "styleName": "button-active",
+  "items": {
+    "edit_here": "\r\n.edit_here\r\n{\r\n\t/* TODO:edit here */\r\n\r\n\ttext-decoration-line: underline;\r\n\ttext-decoration-color: rgb(0, 0, 255);\r\n\tcolor: rgb(0, 0, 255);\r\n\tfont-weight: bold;\r\n\tfont-size: 15px;\r\n\tfont-family: 맑은고딕;\r\n}\r\n"
+  }
+}
