@@ -37,23 +37,24 @@ tab1 = class tab1 extends AView
 	onTabBtnClick(comp, info, e)
 	{
         const thisObj = this;     
-        thisObj.grid.scrollToTop();             // 조회 버튼 클릭 시, 스크롤 맨 위로 이동
-        if (thisObj.data.items.length !== 0){   // 검색 데이터가 있을 때
-            thisObj.pageNo = 1;                 // pageNo 셋팅
-            thisObj.contiKey.element.style.display = 'block';
-            thisObj.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue())
-        }
+        if (thisObj.data.items.length === 0) return;    // 검색된 데이터가 없을 때
+
+        thisObj.grid.scrollToTop();                     // 조회 버튼 클릭 시, 스크롤 맨 위로 이동
+        thisObj.pageNo = 1;                             // pageNo 셋팅
+        thisObj.contiKey.element.style.display = 'block';
+        thisObj.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue())
+        
 	}
 
     // 다음 버튼 클릭 시 
     onContiKeyClick(comp, info, e)
 	{
         const thisObj = this;     
+        if (thisObj.data.items.length === 0) return;            // 검색된 데이터가 없을 때
+
         if (thisObj.pageNo == 0) thisObj.grid.scrollToTop();    // 다음 버튼 처음 클릭 시, 스크롤 맨 위로 이동
-        if (thisObj.data.items.length !== 0){                   // 검색 데이터가 있을 때
-            let pageNo = ++thisObj.pageNo;                      // pageNo 1씩 증가
-            this.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue(), pageNo)
-        }
+        let pageNo = ++thisObj.pageNo;                          // pageNo 1씩 증가
+        this.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue(), pageNo)
 	}
 
     // 그리드 스크롤 끝까지 내려가면 자동 조회 
@@ -89,11 +90,8 @@ tab1 = class tab1 extends AView
         beginBasDt = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;   
 
         let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=${numOfRows}&pageNo=${pageNo}&resultType=json&beginBasDt=${beginBasDt}`;
-        if (searchType == '종목명'){
-            url += `&likeItmsNm=${searchText}`;
-        }else if (searchType == '종목코드'){
-            url += `&likeSrtnCd=${searchText}`;
-        }
+        url += (searchType === '종목명') ? `&likeItmsNm=${searchText}` : `&likeSrtnCd=${searchText}`;
+
 
         $.ajax({
             type: 'GET',

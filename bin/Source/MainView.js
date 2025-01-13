@@ -31,19 +31,16 @@ MainView = class MainView extends AView
 	onSearchClick(comp, info, e)
 	{
         const thisObj = this;
+        const invalidChars = /[`~!@#$%^&*()_\-+=\[\]{};:'",<>?\\|/]/;       // 특수문자 검사 
         
         const searchType = thisObj.searchType.getSelectedItemText();
-        // const searchText = thisObj.searchText.getText();
-        // 입력값 URL 인코딩
-        // const searchType = encodeURIComponent(thisObj.searchType.getSelectedItemText());
-        const searchText = encodeURIComponent(thisObj.searchText.getText());
+        const searchText = invalidChars.test(thisObj.searchText.getText())? '특수문자' : thisObj.searchText.getText();
 
-        const tabId = thisObj.tab.getSelectedTab().innerText;
-        if (tabId == 'home'){
-            // home에 전달하기 위한 전역 변수 저장
-            thisObj.data.searchType = searchType;
-            thisObj.data.searchText = searchText;
-            
+        // 탭에 값 넘기기 위해 전역변수에 저장
+        thisObj.data.searchType = searchType;
+        thisObj.data.searchText = searchText;
+
+        if (thisObj.tab.getSelectedTab().innerText == 'home'){
             thisObj.getItemInfo(searchType, searchText);
         }
 	}
@@ -59,17 +56,11 @@ MainView = class MainView extends AView
 	{
         const thisObj = this;
         const tabId = comp.compId;
-
-        if (tabId == thisObj.home.compId){
-            comp.element.style.color = 'blue';
-            thisObj.my.element.style.color = 'black';
-        }else {
-            comp.element.style.color = 'blue';
-            thisObj.home.element.style.color = 'black';
-        }
-
-
         thisObj.tab.selectTabById(tabId);   
+
+        // 선택된 탭(라벨) 색상 변경
+        thisObj.home.element.style.color = (tabId === 'home')? 'blue' : 'black';
+        thisObj.my.element.style.color = (tabId === 'my')? 'blue' : 'black';
 
         // 검색창 초기화
         thisObj.searchText.setText('');
@@ -85,37 +76,18 @@ MainView = class MainView extends AView
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
         const beginBasDt = '20241101';
-        console.log("searchType",searchType)
-
-        console.log("searchText",searchText)
 
         let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json&beginBasDt=${beginBasDt}`;
-        if (searchType == '종목명'){
-            url += `&likeItmsNm=${searchText}`;
-        }else if (searchType == '종목코드'){
-            url += `&likeSrtnCd=${searchText}`;
-        }
-        console.log("url",url)
+        url += (searchType === '종목명') ? `&likeItmsNm=${searchText}` : `&likeSrtnCd=${searchText}`;
 
-
+        console.log("url= ",url)
         $.ajax({
             type: 'GET',
             url: url,
             success: function(result){
-                console.log("result",result)
-                console.log("result.response",result.response)
-                if(result.response !== undefined){  // `, % 등 입력하였을 경우 
-                    if (result.response.body.totalCount == 0) thisObj.label.element.style.display = 'block';
-                    else thisObj.label.element.style.display = 'none';
-                    
-                    thisObj.data.items = result.response.body.items.item;
-                    if (thisObj.tab.getSelectedTab()){  
-                        thisObj.addDataAtGrid();
-                    }
-                }else {
-                    thisObj.label.element.style.display = 'block';
-                    thisObj.addDataAtGrid();
-                }
+                thisObj.updateLabel(result.response.body.totalCount);   // 검색결과에 따라 라벨 처리하는 함수 호출
+                thisObj.data.items = result.response.body.items.item;   // result 결과 전역 변수에 저장
+                thisObj.addDataAtGrid();                                // 그리드에 데이터 추가하는 함수 호출
             },
             error: function(error){
                 console.error(error);
@@ -126,8 +98,8 @@ MainView = class MainView extends AView
     // 그리드에 데이터 추가 로직
     addDataAtGrid(){
         const thisObj = this;
-
         const tab = thisObj.tab.getSelectedTab();
+
         // home에서 그리드 로드 시, 기본값 설정
         const homeTab = tab.view;
         homeTab.beginBasDt.selectBtnByValue(0);
@@ -135,16 +107,26 @@ MainView = class MainView extends AView
         homeTab.contiKey.element.style.display = 'block';
         homeTab.label.element.style.display = 'none';
         
+        // 그리드 초기화 
         const grid = tab.view.grid;
-        grid.removeAll();           
-        const items = thisObj.data.items;
-        console.log("items",items)
-        for(var i = 0; i < items.length; i++){
-            grid.addRow([   // 기준일자, 종목명, 시장구분, ISIN코드, 법인명, 법인등록번호, 단축코드
-                items[i].basDt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'), 
-                items[i].itmsNm, items[i].mrktCtg, items[i].isinCd, items[i].corpNm, items[i].crno, items[i].srtnCd 
-            ])
-        }
+        grid.removeAll();         
+
+        // 데이터 추가
+        this.data.items.forEach((item) => {
+            grid.addRow([       // 기준일자, 종목명, 시장구분, ISIN코드, 법인명, 법인등록번호, 단축코드
+                item.basDt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
+                item.itmsNm, item.mrktCtg, item.isinCd, item.corpNm, item.crno, item.srtnCd,
+            ]);
+        });
+    }
+
+    // 라벨 업데이트 로직
+    updateLabel(totalCount) {
+        const thisObj = this;
+        if (totalCount === 0){                              // 특수문자 입력 및 조회 데이터 없을 경우 라벨 표시 
+            (thisObj.data.searchText === '특수문자')? thisObj.label.setText("특수문자는 입력할 수 없습니다.") : thisObj.label.setText("검색된 데이터가 없습니다.");
+            thisObj.label.element.style.display = 'block';
+        } else thisObj.label.element.style.display = 'none'; // 조회 데이터 있을 경우 라벨 없애고 그리드에 데이터 추가
     }
 }
 
