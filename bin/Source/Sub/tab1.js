@@ -79,39 +79,55 @@ tab1 = class tab1 extends AView
     getItemInfo(beginBasDt='', numOfRows='', pageNo='1'){
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
+
+        console.log("thisObj.getContainerView().data===",thisObj.getContainerView().data)
         const searchType = thisObj.getContainerView().data.searchType;      // 메인에서 넘어온 검색 구분
         const searchText = thisObj.getContainerView().data.searchText;      // 메인에서 넘어온 검색어
+        const formatBeginDt = thisObj.formatBeginDate(beginBasDt);
 
-        const today = new Date();
-        if (beginBasDt == '0') today.setMonth(today.getMonth() - 3);        // (전체) 세 달 전 날짜 계산
-        else if (beginBasDt == '1') today.setDate(today.getDate() - 2);     // 이틀 전 날짜 계산
-        else if (beginBasDt == '2') today.setDate(today.getDate() - 7);     // 일주일 전 날짜 계산
-        else if (beginBasDt == '3') today.setMonth(today.getMonth() - 1);   // 한 달 전 날짜 계산
-        beginBasDt = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;   
-
-        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=${numOfRows}&pageNo=${pageNo}&resultType=json&beginBasDt=${beginBasDt}`;
+        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=${numOfRows}&pageNo=${pageNo}&resultType=json&beginBasDt=${formatBeginDt}`;
         url += (searchType === '종목명') ? `&likeItmsNm=${searchText}` : `&likeSrtnCd=${searchText}`;
-
+        console.log("url====", url)
 
         $.ajax({
             type: 'GET',
             url: url,
             success: function(result){
-                if (result.response.body.totalCount == 0) {             // 검색 데이터가 없을 때
-                    thisObj.label.element.style.display = 'block';
-                    thisObj.grid.removeAll();
-                } else {                                                // 검색 데이터가 있을 때
-                    thisObj.label.element.style.display = 'none';
-                    const searchData = result.response.body.items.item;
-                    thisObj.addDataAtGrid(searchData);
-                    if (searchData.length < numOfRows || result.response.body.totalCount == numOfRows) return thisObj.contiKey.element.style.display = 'none';   // 불러올 데이터가 없으면 다음 버튼 숨기기
-
+                console.log("result.response.body",result.response.body)
+                const searchData = result.response.body.items.item;
+                thisObj.updateLabel(result.response.body.totalCount);   // 검색결과에 따라 라벨 처리하는 함수 호출
+                thisObj.addDataAtGrid(searchData);
+                if (searchData.length < numOfRows || result.response.body.totalCount == numOfRows) {
+                    thisObj.contiKey.element.style.display = 'none';   // 불러올 데이터가 없으면 다음 버튼 숨기기
+                    //thisObj.getContainer().view.scrollToBottom();
                 }
             },
             error: function(error){
                 console.error(error);
             }
         })
+    }
+
+    // 날짜 조회 포맷 로직
+    formatBeginDate(beginBasDt) {
+        const today = new Date();
+        if (beginBasDt === '0') today.setMonth(today.getMonth() - 3);        // (전체) 세 달 전 날짜 계산
+        else if (beginBasDt === '1') today.setDate(today.getDate() - 2);     // 이틀 전 날짜 계산
+        else if (beginBasDt === '2') today.setDate(today.getDate() - 7);     // 일주일 전 날짜 계산
+        else if (beginBasDt === '3') today.setMonth(today.getMonth() - 1);   // 한 달 전 날짜 계산
+
+        return `${today.getFullYear()}${(today.getMonth() + 1)
+            .toString()
+            .padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
+    }
+
+    // 라벨 업데이트 로직
+    updateLabel(totalCount) {
+        const thisObj = this;
+        if (totalCount === 0){                              // 특수문자 입력 및 조회 데이터 없을 경우 라벨 표시 
+            thisObj.label.element.style.display = 'block';
+            thisObj.grid.removeAll();
+        } else thisObj.label.element.style.display = 'none'; // 조회 데이터 있을 경우 라벨 없애고 그리드에 데이터 추가
     }
 
     // 그리드에 데이터 추가 로직

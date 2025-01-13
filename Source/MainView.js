@@ -80,7 +80,6 @@ MainView = class MainView extends AView
         let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json&beginBasDt=${beginBasDt}`;
         url += (searchType === '종목명') ? `&likeItmsNm=${searchText}` : `&likeSrtnCd=${searchText}`;
 
-        console.log("url= ",url)
         $.ajax({
             type: 'GET',
             url: url,
