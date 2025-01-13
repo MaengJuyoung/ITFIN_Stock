@@ -38,5 +38,10 @@ interItms = class interItms extends AView
 
 	}
 
+
+	onCloseBtnClick(comp, info, e)
+	{
+        this.getContainer().close();
+	}
 }
 

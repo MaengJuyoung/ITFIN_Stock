@@ -114,5 +114,6 @@
                 ></table
             ></div
         ></div
+        ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: auto; height: auto; position: absolute; left: calc(50% - 111.5px); top: 150px; font-weight: bold; color: rgb(0, 0, 255); font-size: 15px;" data-center-x="true" id="tab1--label">2일간 조회된 데이터가 없습니다. </label
     ></div
 ></div>

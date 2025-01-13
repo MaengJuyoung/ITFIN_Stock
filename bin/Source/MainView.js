@@ -14,6 +14,7 @@ MainView = class MainView extends AView
         this.contiKey = '';
         this.getItemInfo();
         this.home.element.style.color = 'blue';
+        this.label.element.style.display = 'none';
 	}
 
 	onInitDone()
@@ -32,7 +33,10 @@ MainView = class MainView extends AView
         const thisObj = this;
         
         const searchType = thisObj.searchType.getSelectedItemText();
-        const searchText = thisObj.searchText.getText();
+        // const searchText = thisObj.searchText.getText();
+        // 입력값 URL 인코딩
+        // const searchType = encodeURIComponent(thisObj.searchType.getSelectedItemText());
+        const searchText = encodeURIComponent(thisObj.searchText.getText());
 
         const tabId = thisObj.tab.getSelectedTab().innerText;
         if (tabId == 'home'){
@@ -81,6 +85,9 @@ MainView = class MainView extends AView
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
         const beginBasDt = '20241101';
+        console.log("searchType",searchType)
+
+        console.log("searchText",searchText)
 
         let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=100&pageNo=1&resultType=json&beginBasDt=${beginBasDt}`;
         if (searchType == '종목명'){
@@ -88,13 +95,25 @@ MainView = class MainView extends AView
         }else if (searchType == '종목코드'){
             url += `&likeSrtnCd=${searchText}`;
         }
+        console.log("url",url)
+
 
         $.ajax({
             type: 'GET',
             url: url,
             success: function(result){
-                thisObj.data.items = result.response.body.items.item;
-                if (thisObj.tab.getSelectedTab()){  
+                console.log("result",result)
+                console.log("result.response",result.response)
+                if(result.response !== undefined){  // `, % 등 입력하였을 경우 
+                    if (result.response.body.totalCount == 0) thisObj.label.element.style.display = 'block';
+                    else thisObj.label.element.style.display = 'none';
+                    
+                    thisObj.data.items = result.response.body.items.item;
+                    if (thisObj.tab.getSelectedTab()){  
+                        thisObj.addDataAtGrid();
+                    }
+                }else {
+                    thisObj.label.element.style.display = 'block';
                     thisObj.addDataAtGrid();
                 }
             },
@@ -114,10 +133,12 @@ MainView = class MainView extends AView
         homeTab.beginBasDt.selectBtnByValue(0);
         homeTab.numOfRows.selectItemByValue(100);
         homeTab.contiKey.element.style.display = 'block';
+        homeTab.label.element.style.display = 'none';
         
         const grid = tab.view.grid;
         grid.removeAll();           
         const items = thisObj.data.items;
+        console.log("items",items)
         for(var i = 0; i < items.length; i++){
             grid.addRow([   // 기준일자, 종목명, 시장구분, ISIN코드, 법인명, 법인등록번호, 단축코드
                 items[i].basDt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'), 

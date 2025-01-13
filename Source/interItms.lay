@@ -1,6 +1,7 @@
 <div data-base="AView" data-class="interItms" class="AView-Style" style="left: 0px; top: 0px; width: 300px; height: 400px; background-color: rgba(255, 255, 255, 0.9); border-width: 1px; border-color: rgb(0, 0, 255); border-radius: 5px; position: relative; font-family: &quot;맑은 고딕&quot;;" data-class-map="{&quot;afc&quot;:[&quot;AView&quot;,&quot;AButton&quot;,&quot;ALabel&quot;,&quot;ASelectBox&quot;]}"
     ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 40px; position: relative; top: 0px; left: 0px; background-color: rgba(0, 0, 0, 0);" id="interItms--header"
-        ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 40px; height: 40px; position: relative; float: right; font-size: 40px; line-height: 40px; background-color: rgba(0, 0, 0, 0);">×</button
+        ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 40px; height: 40px; position: relative; float: right; font-size: 40px; line-height: 40px; background-color: rgba(0, 0, 0, 0);" id="interItms--closeBtn" data-listener-click="interItms:onCloseBtnClick">×</button
+        ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: auto; height: 100%; position: relative; top: 0px; line-height: 40px; margin-left: 10px; font-weight: bold;">관심종목 추가</label
     ></div
     ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; position: relative; left: 0px; height: 300px; background-color: rgba(0, 0, 0, 0);"
         ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 150px; position: relative; left: 0px; background-color: rgba(0, 0, 0, 0);"
