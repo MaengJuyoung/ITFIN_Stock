@@ -162,7 +162,7 @@ tab1 = class tab1 extends AView
         wnd.setData(data);
         wnd.setResultCallback(result => {
             if (result) {
-                this.renderStockItems();
+                this.getMyStock();
             }
         });
     }
@@ -189,47 +189,33 @@ tab1 = class tab1 extends AView
 
     // 관심 종목 뷰를 추가하고 라벨에 종목 이름 표시
     renderStockItems() {
-    // localStorage에서 myStock 가져오기
-    const myStock = JSON.parse(localStorage.getItem('myStock'));
+        // localStorage에서 myStock 가져오기
+        const myStock = JSON.parse(localStorage.getItem('myStock'));
 
-    // 그룹의 뷰 가져오기
-    const groups = this.group.$ele[0].childNodes;
+        // 그룹의 뷰 가져오기
+        const groups = this.group.$ele[0].childNodes;
 
-    const interItms = [];
-    myStock.forEach
-
-    // 관심 종목 데이터를 반복하며 그룹 내부의 라벨을 업데이트
-    myStock.forEach((groupData, groupIndex) => {
-        console.log("groupData",groupData);
-        console.log("groupIndex",groupIndex);
-
-        if (groups[groupIndex]) {
-            // 그룹 내부의 기존 라벨 제거
-            const groupElement = groups[groupIndex];
-            while (groupElement.firstChild) {
-                groupElement.removeChild(groupElement.firstChild);
-            }
-
-            // 그룹에 새로운 라벨 추가
-            groupData.interItms.forEach(itemName => {
-                const label = document.createElement('label');
-                label.className = 'ALabel-Style';
-                label.style.cssText = `
-                    width: 100%; 
-                    height: auto; 
-                    position: relative; 
-                    left: 0; 
-                    top: 0; 
-                    font-weight: normal; 
-                    display: block;
-                `;
-                label.textContent = itemName; // 종목 이름 설정
-                groupElement.appendChild(label);
+        const interItms = [];
+        // 관심 종목 데이터를 반복하며 배열에 추가
+        myStock.forEach((gruopData) => {
+            gruopData.interItms.forEach(itemName => {
+                interItms.push(itemName);
             });
-        }
-    });
-}
+        })
+    }
 
+    // localStorage에 있는 관심 종목들만 배열에 저장하는 로직
+    getMyStock(){
+        const myStock = JSON.parse(localStorage.getItem('myStock'));
+        const interItms = [];
+        myStock.forEach((gruopData) => {
+            gruopData.interItms.forEach(itemName => {
+                if (!interItms.includes(itemName)) interItms.push(itemName);
+            });
+        })
+        console.log("interItms=",interItms);
+    }
 
+    
 }
 

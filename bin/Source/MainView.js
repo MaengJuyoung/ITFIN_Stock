@@ -21,7 +21,7 @@ MainView = class MainView extends AView
 
         const myStock = [
         {
-            interGrp: "관심그룹001",
+            interGrp: "관심그룹 1",
             interItms: [] // 관심 종목
         }
         ];

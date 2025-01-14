@@ -18602,6 +18602,1061 @@ afc.loadCSSIfNotLoaded = function()
 
 
 
+/**
+ * @author asoocool
+ */
+
+//-------------------------------------------------------------------
+//	컴포넌트나 컨테이너를 셋팅하지 않는다. 
+//	순수하게 div 태그로만 분리시켜 놓는 기능
+//	이후에 호출한 곳에서 태그에 컨테이너나 뷰를 셋팅하여 확장한다.
+//-------------------------------------------------------------------
+function ASplitter(listener, barSize)
+{
+	this.splitDir = 'column';
+	this.targetEle = null;
+	this.$target = null;
+	
+	this.listener = listener;
+	
+	this.defSplitSize = 200;
+	
+	if(barSize==undefined || barSize==null) this.barSize = ASplitter.BAR_SIZE;
+	else this.barSize = barSize;
+	
+	//스플릿 컨테이너의 position 을 static 으로 셋팅할 지
+	//createSplit 호출 시 sizeArr 사이즈 정보 배열을 넘기면 absolute 로 설정되고
+	//-1 을 넘기면 static 으로 설정된다.
+	this.isStatic = false;
+	
+	this.isSizeToRatio = false;
+	
+	this.option = {};
+}
+
+ASplitter.FRAME_TAG = '<div></div>';
+//ASplitter.FRAME_TAG = '<div style="border:1px solid cyan;"></div>';
+ASplitter.BAR_SIZE = 5;
+ASplitter.BAR_COLOR = '#bbb';
+
+
+
+ASplitter.prototype.setOption = function(option, noOverwrite)
+{
+	AUtil.optionHelper(this, option, noOverwrite);
+};
+
+ASplitter.prototype.setDefSplitSize = function(defSplitSize)
+{
+	this.defSplitSize = defSplitSize;
+};
+
+ASplitter.prototype.enableSizeToRatio = function(enable)
+{
+    this.isSizeToRatio = enable;
+};
+
+//targetEle : AContainer, AView
+//row : 좌우로 분리, column : 상하로 분리
+ASplitter.prototype.createSplit = function(targetEle, count, sizeArr, splitDir)
+{
+	this.targetEle = targetEle;
+	this.$target = $(targetEle);
+	
+	if(!count || count<1) count = 1;
+	
+	if(splitDir) this.splitDir = splitDir;
+	
+	//target Size
+	var trgSize, i, $frmEle, barCount = count - 1, size;
+	
+	
+	if(this.splitDir=='row') trgSize = this.$target.width();
+	else trgSize = this.$target.height();
+	
+	//-----------------------------------------------
+	//sizeArr을 지정하지 않으면 자동계산 빈 배열만 만들어 둔다.
+	
+	if(!sizeArr) sizeArr = new Array(count).fill(-1);
+	
+	//sizeArr == -1 <-- 이렇게 비교하면 sizeArr 이 [-1] 인 경우도 equal 도 판단함
+	else if(sizeArr === -1) 
+	{
+		this.isStatic = true;
+		this.barSize = 0;
+	}
+
+	/*
+	if(!this.isStatic) 
+	{
+		for(i=0; i<count; i++)
+		{
+			size = sizeArr[i];
+
+			//sizeArr 을 지정 안 한 경우 또는 -1 인 경우는 자동 계산(auto)
+			if(size==undefined || size<0)
+			{
+				sizeArr[i] = undefined;	//자동 계산임을 구별하기 위해 일관된 값으로 변경
+			}
+
+			//비율 지정(0.2,0.5, 0.9 ...)인 경우 계산
+			//else if(size<1) sizeArr[i] = trgSize*size;
+		}
+	}
+	*/
+
+	
+	//-----------------------------------------------
+	
+	var isSplitBar, totCount = count + barCount;
+	
+	//프레임 삽입
+	for(i=0; i<totCount; i++)
+	{
+		//-------------------------------
+		//	split bar, 1,3,5 ...
+		//-------------------------------
+		isSplitBar = (i%2!=0);
+		
+		$frmEle = $(ASplitter.FRAME_TAG);
+		
+		if(!this.isStatic) 
+		{
+			if(isSplitBar) this._eventProcess($frmEle);
+			else $frmEle[0].curSize = sizeArr[i/2];
+		}
+		
+		this._insert_helper(isSplitBar, $frmEle, -1, true);
+	}
+	
+	this.updateSize();
+};
+
+//inx 가 음수(-1) 인 경우는 마지막 인덱스를 의미한다.
+//splitSize 가 음수이면 자동 계산된다.
+ASplitter.prototype.insertSplit = function(inx, splitSize, isAfter)
+{
+	var i, $frmEle, isSplitBar, retVal;
+	
+	isAfter = isAfter ? 1 : 0;
+	
+	//프레임 삽입
+	for(i=0; i<2; i++)
+	{
+		//inx : 음수, isAfter : true->[스플릿바/프레임], false->[프레임/스플릿바]
+		//inx : 양수, isAfter : true->[프레임/스플릿바], false->[스플릿바/프레임]
+		isSplitBar = inx<0 ? i!=isAfter : i==isAfter;
+		
+		$frmEle = $(ASplitter.FRAME_TAG);
+		
+		if(!this.isStatic) 
+		{
+			//split bar
+			if(isSplitBar) this._eventProcess($frmEle);
+			else $frmEle[0].curSize = (splitSize==undefined) ? -1 : splitSize;
+		}
+		
+		if(!isSplitBar) retVal = $frmEle[0];
+		
+		this._insert_helper(isSplitBar, $frmEle, inx*2, isAfter);
+	}
+	
+	this.updateSize();
+	
+	//마지막 추가된 실제 프레임 엘리먼트 리턴
+	return retVal;
+};
+
+ASplitter.prototype.prependSplit = function(splitSize)
+{
+	return this.insertSplit(0, splitSize, false);
+};
+
+ASplitter.prototype.appendSplit = function(splitSize)
+{
+	return this.insertSplit(-1, splitSize, true);
+};
+
+ASplitter.prototype.removeSplit = function(inx, beforeRemove)
+{
+	var $removeFrm, $barFrm;
+	
+	if(inx<0) $removeFrm = this.$target.children().last();
+	else $removeFrm = this.$target.children().eq(inx*2);
+	
+	if(inx==0) $barFrm = $removeFrm.next();
+	else $barFrm = $removeFrm.prev();
+	
+	if(beforeRemove) beforeRemove($removeFrm[0]);
+	
+	$removeFrm.remove();
+	$barFrm.remove();
+	
+	this.updateSize(true);
+};
+
+//--------------------------------------------------------------------------------------------------------
+//	asoocoo test
+/*
+ASplitter.prototype.hideSplit = function(inx)
+{
+	var $removeFrm, $barFrm;
+	
+	if(inx<0) $removeFrm = this.$target.children().last();
+	else $removeFrm = this.$target.children().eq(inx*2);
+	
+	if(inx==0) $barFrm = $removeFrm.next();
+	else $barFrm = $removeFrm.prev();
+	
+	$removeFrm.hide();
+	$barFrm.hide();
+	
+	this.setSplitSize(inx, 0);
+};
+*/
+
+ASplitter.prototype.enableSplitBar = function(inx, enable)
+{
+	var bar = this.$target.children()[inx*2+1];
+	
+	bar.moveDisable = !enable;
+	$(bar).draggable('option', 'disabled', !enable);
+};
+
+ASplitter.prototype.setSplitSize = function(inx, splitSize)
+{
+	var frmEle = this.getSplit(inx);
+	
+	frmEle.curSize = splitSize;
+	
+	this.updateSize();
+};
+
+
+ASplitter.prototype.getSplitSize = function(inx)
+{
+	var $frmEle = $(this.getSplit(inx));
+	
+	if(this.splitDir=='row') return $frmEle.width();
+	else return $frmEle.height();
+};
+
+
+//-----------------------------------------------------------------------------------------------------------
+
+
+
+ASplitter.prototype.getSplit = function(inx)
+{
+	if(inx<0) return this.$target.children().last()[0];
+	else return this.$target.children()[inx*2];
+};
+
+ASplitter.prototype.getSplitBar = function(inx)
+{
+	if(inx<0) return this.$target.children().last()[1];
+	else return this.$target.children()[inx*2+1];
+};
+
+ASplitter.prototype.getSplitCount = function()
+{
+	return parseInt((this.$target.children().length+1)/2);
+};
+
+ASplitter.prototype.getBarCount = function()
+{
+	return (this.getSplitCount()-1);
+};
+
+ASplitter.prototype.removeAllSplit = function()
+{
+	this.$target.children().remove();
+};
+
+ASplitter.prototype.sizeToRatio = function()
+{
+	var trgSize, i, curSize, $splitEle = this.$target.children(),
+        count = $splitEle.length,
+        isRow = (this.splitDir=='row');
+	
+	if(isRow) trgSize = this.$target.width();
+    else trgSize = this.$target.height();
+    
+	for(i=0; i<count; i+=2)
+	{
+        if(isRow) curSize = $splitEle.eq(i).width()/trgSize;
+        else curSize = $splitEle.eq(i).height()/trgSize;
+
+        $splitEle[i].curSize = curSize;
+	}
+};
+
+//현재 셋팅되어져 있는 사이즈 정보를 분할된 모든 프레임에 다시 적용한다.
+ASplitter.prototype.updateSize = function(isRemove)
+{
+	if(this.isStatic) return;
+
+	var trgSize, sumColSize = 0, autoCount = 0, autoSize = 0, i, curSize,
+		$splitEle = this.$target.children(), barCount, isBarHide,
+		count = $splitEle.length;
+	
+	if(this.splitDir=='row') trgSize = this.$target.width();
+	else trgSize = this.$target.height();
+	
+	
+	//프레임이 삭제되어 업데이트 하는 경우 첫번째 프레임을 오토 사이즈로 지정한다.
+	//asoocool test
+	//if(isRemove && count>0) $splitEle[0].curSize = undefined;
+		
+	//-----------------------------------------------
+	
+	barCount = this.getBarCount();
+		
+	for(i=0; i<count; i+=2)
+	{
+		curSize = $splitEle[i].curSize;
+		
+		//size 가 음수인 경우는 자동 계산(auto)
+		if(curSize<0) 
+		{
+			isBarHide = false;
+			autoCount++;
+		}
+		
+		else 
+		{
+			//0.5, 0.1 ... 비율
+			if(curSize<=1) curSize *= trgSize;
+			
+			isBarHide = (curSize==0);
+			
+			//splitFrame 사이즈가 0 이면 하나의 barSize 공간이 숨겨지므로
+			if(isBarHide) barCount--;
+			
+			sumColSize += curSize;
+		}
+		
+		//console.log(i + ':' + count);	
+		
+		//마지막이 아니면 다음 스플릇바를 숨긴다.
+		if(i < count-1) $splitEle[i+1].hideBar = isBarHide;
+				
+		//마지막 프레임이면 바로 이전 스플릿바를 숨기고				
+		else if(count>1) $splitEle[i-1].hideBar = isBarHide;
+	}
+	
+	if(autoCount>0)
+		autoSize = parseInt( (trgSize - this.barSize*barCount - sumColSize)/autoCount );
+		
+	var $frmEle, offset = 0, addSize = 0, isSplitBar;
+	
+	for(i=0; i<count; i++)
+	{
+		//-------------------------------
+		//	split bar, 1,3,5 ...
+		//-------------------------------
+		isSplitBar = (i%2!=0);
+		
+		$frmEle = $splitEle.eq(i);
+		
+		if(isSplitBar) 
+		{
+			//스플릿 프레임의 사이즈가 0 보다 큰 경우만 스플릿바가 보여지도록
+			
+			if($frmEle[0].hideBar) addSize = 0;
+			else addSize = this.barSize;
+			
+			$frmEle[0].curPos = offset;
+		}
+		else 
+		{
+			curSize = $frmEle[0].curSize;
+		
+            //음수인 경우 autoSize 셋팅
+            if(curSize<0) 
+            {
+                addSize = autoSize;
+            }
+            else 
+            {
+                if(curSize<=1) curSize *= trgSize;
+                
+                addSize = curSize;
+            }
+		}
+		
+		if(this.splitDir=='row')
+		{
+			$frmEle.css(
+			{
+				'left': offset+'px',
+				'width': addSize+'px',
+			});
+		}
+		else
+		{
+			$frmEle.css(
+			{
+				'top': offset+'px',
+				'height': addSize+'px'
+			});
+		}
+		
+		offset += addSize;
+		
+		if(!isSplitBar && this.listener) this.listener.onSplitChanged($frmEle[0]);
+	}
+};
+
+//inx : 스플릿바를 포함한 전체 개수를 기준으로 한 index
+//inx 가 0보다 작으면 마지막 원소이다.
+ASplitter.prototype._insert_helper = function(isSplitBar, $frmEle, inx, isAfter)
+{
+	if(!this.isStatic)
+	{
+		if(this.splitDir=='row')
+		{
+			$frmEle.css(
+			{
+				'position': 'absolute',
+				'top': '0px',
+				'height': '100%'
+			});
+		}
+		else
+		{
+			$frmEle.css(
+			{
+				'position': 'absolute',
+				'left': '0px',
+				'width': '100%',
+			});
+		}
+		
+		//add split bar 
+		if(isSplitBar)
+		{
+			$frmEle.css(
+			{
+				'background-color': ASplitter.BAR_COLOR,
+				'z-index': 1
+			});
+		}
+		else
+		{
+			$frmEle.css({'z-index': 0});
+		}
+	}
+	
+	
+	//----------------------------------------------
+	var $pos = null;
+	
+	if(inx<0) $pos = this.$target.children().last();
+	else $pos = this.$target.children().eq(inx);
+
+	if($pos.length>0) 
+	{
+		if(isAfter) $frmEle.insertAfter($pos);
+		else $frmEle.insertBefore($pos);
+	}
+	else this.$target.append($frmEle);
+};
+
+ASplitter.prototype._eventProcess = function($splitBar)
+{
+	var thisObj = this;
+	
+	if(this.splitDir=='row')
+	{
+		$splitBar.draggable(
+		{ 
+			axis: 'x',
+			containment: "parent",
+			cursor: "e-resize",
+			helper: "clone",
+			areaEle: this.targetEle,
+
+			stop: function( event, ui ) 
+			{
+				thisObj._moveSplitBar(this, ui.position.left);
+			},
+
+			drag: function( event, ui ) 
+			{
+				if(thisObj.option.isAutoFolding) 
+					return thisObj._autoFoldingManage($splitBar, ui, 'left', 'width', 250);
+			}
+		});
+		
+		$splitBar.mouseenter(function()
+		{
+			if(!this.moveDisable) $(this).css('cursor','e-resize');
+		});
+	}
+	else
+	{
+		$splitBar.draggable(
+		{ 
+			axis: 'y',
+			containment: "parent",
+			cursor: "s-resize",
+			helper: "clone",
+			areaEle: this.targetEle,
+
+			stop: function( event, ui ) 
+			{
+				thisObj._moveSplitBar(this, ui.position.top);
+			},
+
+			drag: function( event, ui ) 
+			{
+				if(thisObj.option.isAutoFolding) 
+					return thisObj._autoFoldingManage($splitBar, ui, 'top', 'height', 250);
+			}
+		});
+		
+		$splitBar.mouseenter(function()
+		{
+			if(!this.moveDisable) $(this).css('cursor','s-resize');
+		});
+	}
+};
+
+ASplitter.prototype._autoFoldingManage = function($bar, ui, posKey, sizeKey, openSize)
+{
+	//0 이나 1 로 하게 되면 비율로 인식하게 된다.
+	var min = 2, max = this.$target[sizeKey]() - this.barSize - 2;
+
+	//자동 펼침
+	if(ui.position[posKey] > min && ui.position[posKey]< min+70) 
+	{
+		if(ui.position[posKey] > min+50)
+		{
+			ui.position[posKey] = openSize;
+			$bar.removeClass('splitter_bar_folding');
+			return false;
+		}
+	}
+	//자동 숨김
+	else if(ui.position[posKey] < 150) 
+	{
+		ui.position[posKey] = min;
+		$bar.addClass('splitter_bar_folding');
+		return false;
+	}
+
+	//오른쪽 자동 펼침
+	else if(ui.position[posKey] < max && ui.position[posKey] > max-70) 
+	{
+		if(ui.position[posKey] < max-50)
+		{
+			ui.position[posKey] = max - openSize;
+			$bar.removeClass('splitter_bar_folding');
+			return false;
+		}
+	}
+
+	//오른쪽 자동 숨김
+	else if(ui.position[posKey] > max-150) 
+	{
+		ui.position[posKey] = max;
+		$bar.addClass('splitter_bar_folding');
+		return false;
+	}
+};
+
+ASplitter.prototype._moveSplitBar = function(splitBar, newPos)
+{
+	var moveSize = newPos - splitBar.curPos, prevSize, nextSize,
+		$prev = $(splitBar).prev(),
+		$next = $(splitBar).next();
+
+	if(this.splitDir=='row')
+	{
+		prevSize = $prev.width() + moveSize;
+		$prev.css('width', prevSize+'px');
+		
+		$(splitBar).css('left', newPos+'px');
+		
+		nextSize = $next.width() - moveSize;
+		$next.css(
+		{
+			left: (newPos+this.barSize)+'px',
+			width: nextSize+'px'
+		});
+	}
+	else
+	{
+		prevSize = $prev.height() + moveSize;
+		$prev.css('height', prevSize+'px');
+		
+		$(splitBar).css('top', newPos+'px');
+		
+		nextSize = $next.height() - moveSize;
+		$next.css(
+		{
+			top: (newPos+this.barSize)+'px',
+			height: nextSize+'px'
+		});
+	}
+
+	splitBar.curPos = newPos;
+
+	if($prev[0].curSize>1) $prev[0].curSize = prevSize;
+	if($next[0].curSize>1) $next[0].curSize = nextSize;
+	
+	if(this.isSizeToRatio) this.sizeToRatio();
+	
+	//리사이즈 이벤트 통보
+	if(this.listener)
+	{
+		this.listener.onSplitChanged($prev[0]);
+		this.listener.onSplitChanged($next[0]);
+	}
+};
+
+
+
+	
+
+function ADataMask(ele, acomp)
+{
+	this.ele = ele;
+	this.acomp = acomp;
+	
+	this.maskFuncs = [];
+	this.maskParams = [];
+	
+	this.isClear = true;
+}
+
+// 기본 데이터
+ADataMask.dataInfoArr = [];
+
+// update 할 때마다 전체 마스크함수 목록을 저장해두는 변수
+ADataMask.maskListArr = [];
+
+// 루트뷰가 내부 컴포넌트를 realize 하고 삭제된 마스크함수 목록으로 알림창 띄우기 위한 변수
+ADataMask.removedArr = [];
+
+// 이전 업데이트 데이터와 현재 데이터로 추가된 함수를 판단하여 리턴한다.
+ADataMask.update = function()
+{
+	var allMaskArr = [], updateArr = [], removeArr = [], tmp, i;
+	
+	// 함수와 배열이 아닌 전체 마스크 함수 목록을 뽑는다. type.funcName
+	for(var type in ADataMask)
+	{
+		if(typeof ADataMask[type] == 'function' ||
+		  Array.isArray(ADataMask[type])) continue;
+		
+		for(var funcName in ADataMask[type])
+		{
+			tmp = type+'.'+funcName;
+			allMaskArr.push(tmp);
+		}
+	}
+	/*
+	// 전체 마스크 함수 목록에 없는 항목 제거
+	for(i=0; i<ADataMask.maskListArr.length; i++)
+	{
+		if(allMaskArr.indexOf(ADataMask.maskListArr[i]) < 0)
+		{
+			removeArr.push(ADataMask.maskListArr[i]);
+		}
+	}*/
+	
+	// 이전에 확인했을 때의 마스크 함수 외에 추가된 함수 추가
+	for(i=allMaskArr.length-1; i>0; i--)
+	{
+		if(ADataMask.maskListArr.indexOf(allMaskArr[i]) < 0)
+		{
+			updateArr.push(allMaskArr[i]);
+		}
+	}
+	
+	ADataMask.maskListArr = allMaskArr;
+	
+	return updateArr;
+};
+
+ADataMask.get = function(type, name)
+{
+	if(ADataMask[type]) return ADataMask[type][name];
+};
+
+ADataMask.getFunc = function(type, name)
+{
+	var mask = ADataMask.get(type, name);
+	if(mask) return mask.func;
+};
+
+ADataMask.prototype.mask = function(value, ele, obj)
+{
+	if(ele) this.ele = ele;
+	this.setOriginal(value);
+	
+	if(this.acomp.isDev())
+	{
+		this.ele.setAttribute('data-maskorigin', value);
+		try{
+			for(var i=0; i<this.maskFuncs.length; i++)
+				value = this.maskFuncs[i].call(this, value, this.maskParams[i], this.ele, obj );
+		}catch(e){
+			//console.log(e);
+		}
+	}
+	else
+	{
+		for(var i=0; i<this.maskFuncs.length; i++)
+			value = this.maskFuncs[i].call(this, value, this.maskParams[i], this.ele, obj );
+	}
+	
+	if(this.isClear) this.data = this.keyArr = this.queryData = null;
+	
+	return value;
+};
+
+ADataMask.prototype.unmask = function(ele)
+{
+	if(ele) this.ele = ele;
+	return this.getOriginal(ele);
+};
+
+ADataMask.prototype.getMaskFunc = function(inx)
+{
+	if(!this.maskFuncs[inx]) return;
+	
+	return [ this.maskFuncs[inx], this.maskParams[inx] ];
+};
+
+ADataMask.prototype.insertMaskFunc = function(func, param, inx)
+{
+	if(func) 
+	{
+		if(inx==undefined)
+		{
+			this.maskFuncs.push(func);
+			this.maskParams.push(param);
+		}
+		else
+		{
+			this.maskFuncs.splice(inx, 0, func);
+			this.maskParams.splice(inx, 0, param);
+		}
+	}
+};
+
+ADataMask.prototype.updateMaskFunc = function(func, param, inx)
+{
+	if(inx!=undefined && inx < this.maskFuncs.length)
+	{
+		if(func) this.maskFuncs[inx] = func;
+		if(param) this.maskParams[inx] = param;
+	}
+};
+
+ADataMask.prototype.moveMaskFunc = function(fromIdx, toIdx)
+{
+	if(fromIdx == undefined || toIdx == undefined) return;
+	if(fromIdx < 0 || fromIdx > this.maskFuncs.length-1) return;
+	if(toIdx < 0 || toIdx > this.maskFuncs.length-1) return;
+	
+	var func = this.maskFuncs.splice(fromIdx, 1)[0];
+	var param = this.maskParams.splice(fromIdx, 1)[0];
+	
+	this.maskFuncs.splice(toIdx, 0, func);
+	this.maskParams.splice(toIdx, 0, param);
+};
+
+
+ADataMask.prototype.removeMaskFunc = function(inx)
+{
+	if(inx != undefined)
+	{
+		this.maskFuncs.splice(inx, 1);
+		this.maskParams.splice(inx, 1);
+	}
+};
+
+// 개발에서 마스크를 제거하거나 추가할 때 호출하여 마스킹처리하는 함수
+ADataMask.prototype.resetElement = function()
+{
+	if(!this.ele) return;
+	
+	if(this.ele.acomp)
+	{
+		if(this.ele.acomp.setMaskValue) this.ele.acomp.setMaskValue(this.getOriginal());
+	}
+	else
+	{
+		var value = this.mask(this.getOriginal());
+		if(typeof value != 'string') value = '';
+		this.ele.innerHTML = value;
+	}
+};
+
+ADataMask.prototype.setOriginal = function(original)
+{
+	this.ele.dmOriginal = original;
+};
+
+ADataMask.prototype.getOriginal = function()
+{
+	return this.ele.dmOriginal;
+};
+
+ADataMask.setQueryData = function(data, keyArr, queryData)
+{
+	ADataMask.dataInfoArr = [data, keyArr, queryData];
+};
+
+ADataMask.getQueryData = function(data, keyArr, queryData)
+{
+	return ADataMask.dataInfoArr;
+};
+
+ADataMask.clearQueryData = function()
+{
+	ADataMask.dataInfoArr = [];
+};
+/*
+ADataMask.prototype.setQueryData = function(data, keyArr, queryData)
+{
+	this.data = data;
+	this.keyArr = keyArr;
+	this.queryData = queryData;
+};
+
+ADataMask.prototype.getQueryData = function()
+{
+	return {data: this.data, keyArr: this.keyArr, queryData: this.queryData};
+};
+*/
+ADataMask.Number = 
+{
+	money:
+	{
+		title: '정수부의 3자리마다 콤마를 넣는다.',
+		func: function money(value, param, ele)
+		{
+			if(value == undefined) value = '';
+			else
+			{
+				var reg = /(^[+-]?\d+)(\d{3})/;
+				value += "";
+				//while (reg.test(value.toString()))
+				while( reg.test(value) )
+					value = value.replace(reg, '$1' + ',' + '$2');
+			}
+
+			return value;
+		}
+	},
+	
+	removeComma:
+	{
+		title: '콤마를 제거한다.',
+		func: function removeComma(value, param, ele)
+		{
+			if(!value) return '';
+			else return value.toString().replace(/,/g, '');
+		}
+	},
+	
+	decimalAdjust:
+	{
+		title: '숫자의 소수점 이하를 조절한다. 숫자값 리턴',
+		param: ['유형(floor, round, ceil)', '지수값'],
+		func: function decimalAdjust(value, param, ele)
+		{
+			var type = param[0]?param[0]:'floor',
+				exp = param[1];
+			
+			// If the exp is undefined or zero...
+			if (typeof exp === 'undefined' || +exp === 0) {
+				return Math[type](value);
+			}
+			value = +value;
+			exp = +exp;
+			// If the value is not a number or the exp is not an integer...
+			if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+				return NaN;
+			}
+			// Shift
+			value = value.toString().split('e');
+			value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+			// Shift back
+			value = value.toString().split('e');
+			return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+		}
+	},
+	
+	toFixed:
+	{
+		title: '지정된 숫자를 고정 소수점 표기법을 사용한 문자열로 만들어 리턴한다.',
+		param: ['소수점 뒤 자릿수'],
+		func: function toFixed(value, param, ele)
+		{
+			return (+value).toFixed(param[0]);
+		}
+	},
+	
+	abs:
+	{
+		title: '절대값을 만들어 문자로 리턴한다.',
+		func: function abs(value, param, ele)
+		{
+			value = value.toString();
+			if(value.charAt(0) == '-') return value.substring(1);
+			else return value;
+		}
+	},
+	
+	percent:
+	{
+		title: '뒷부분에 %를 붙인다.',
+		func: function percent(value, param, ele)
+		{
+			return value + '%';
+		}
+	},
+	
+	abs_percent:
+	{
+		title: '절대값을 만들고 뒷부분에 %를 붙여 리턴한다.',
+		func: function abs_percent(value, param, ele)
+		{
+			return ADataMask.Number.percent.func(ADataMask.Number.abs.func(value));
+		}
+	},
+	// 더미 데이터의 길이만큼 '●'를 생성
+	makeDummyString:
+	{
+		title: '더미 데이터의 길이만큼 ●문자를 넣는다.',
+		func: function makeDummyString(value, param, ele)
+		{
+			var dumStr = '';
+			for(var i=0; i<value.length; i++) dumStr += '●';
+			return dumStr;
+		}
+	},
+	// 사업자번호
+	business:
+	{
+		title: '입력된 값을 사업자번호 포맷으로 변경한다. ###-##-#####',
+		func: function business(value, param, ele)
+		{
+			value = value.replace(/[^0-9]/g, '');
+			value = value.substring(0, 10);
+			
+			if(value.length>5) value = value.substring(0,3) + '-' + value.substring(3,5) + '-' + value.substring(5,10);
+			else if(value.length>3) value = value.substring(0,3) + '-' + value.substring(3,5);
+			return value;	//value.replace(/([0-9]{3})([0-9]{2})([0-9]{5})/,"$1-$2-$3");
+		}
+	},
+	// 법인등록번호
+	corporate:
+	{
+		title: '입력된 값을 법인등록번호 포맷으로 변경한다. ######-#######',
+		func: function corporate(value, param, ele)
+		{
+			value = value.replace(/[^0-9]/g, '');
+			value = value.substring(0, 13);
+			
+			if(value.length>6) value = value.substring(0,6) + '-' + value.substring(6,13);
+			return value;	//value.replace(/([0-9]{6})([0-9]{7})/,"$1-$2");
+		}
+	},
+	// 숫자로 변경
+	number:
+	{
+		title: '입력된 값을 숫자로 변경한다. 맨앞의 0과 소숫점 끝의 0이 제거된다.',
+		func: function number(value, param, ele)
+		{
+			value = Number(value);
+			if(isNaN(value)) value = 0;
+			
+			return value;
+		}
+	}
+};
+
+ADataMask.Date = 
+{
+	date:
+	{
+		title: 'YYYY@MM@DD 형태로 변경한다. parseInt 처리한 값으로 표현한다.',
+		param: ['구분자(기본값 /)'],
+		func: function date(value, param, ele)
+		{
+			var divider = '/';
+			if(param[0]) divider = param[0];
+			if(!parseInt(value, 10)) return '';
+			value+='';
+			return value.substring(0,4)+divider+value.substring(4,6)+divider+value.substring(6,8); 
+		}
+	},
+	time:
+	{
+		title: 'HH@MM@SS 형태로 변경한다. parseInt 처리한 값으로 표현한다.',
+		param: ['구분자(기본값 /)'],
+		func: function time(value, param, ele)
+		{
+			var divider = '/';
+			if(param[0]) divider = param[0];
+			if(!parseInt(value, 10)) return '';
+			value+='';
+			return value.substring(0,2)+divider+value.substring(2,4)+divider+value.substring(4,6); 
+		}
+	},
+};
+
+ADataMask.DataGrid = 
+{
+    dataType:
+    {
+        title: 'ADataGrid 셀의 type을 지정한다.',
+        param: ['타입(button, checkbox, radio)'],
+        func: function(value, param, ele, dataObj)
+        {
+            dataObj.type = param[0];
+            dataObj.value = value;
+            return dataObj;
+        }
+    }
+};
+
+ADataMask.Text = 
+{
+	prefix:
+	{
+		title: '데이터의 앞부분에 문자를 넣는다.',
+		param: ['들어갈 문자', '값 있을때만 문자추가(생략시 false)'],
+		func: function(value, param, ele)
+		{
+			var txt = '';
+			if(param[0]) txt = param[0];
+            if(param[1]&&!value) txt = '';
+			return (value = txt + value);
+		}
+	},
+	suffix:
+	{
+		title: '데이터의 뒷부분에 문자를 넣는다.',
+		param: ['들어갈 문자', '값 있을때만 문자추가(생략시 false)'],
+		func: function(value, param, ele)
+		{
+			var txt = '';
+			if(param[0]) txt = param[0];
+            if(param[1]&&!value) txt = '';
+			return value += txt;
+		}
+	}
+};
+
+
 function TabKeyController()
 {
 	//depth가 있는 맵. 기본적으로 이곳에 쌓임.
@@ -22576,6 +23631,479 @@ ALayout.prototype._applyLoadedQuery = function()
 /**
  * @author asoocool
  */
+
+//-----------------------------------------------------------------------------------------
+//  AButton class
+//	버튼의 normal 상태는 없고 기본 색상과 스타일이 normal 상태이다.
+//	기본 색상과 스타일을 기준으로 downState, overState, disableState 를 기본적으로 제공해 준다.
+//	추가적으로 over, down, disable 상태를 변경하고 싶은 경우는 setBtnStyle 함수를 통해 
+//	style 파일의 키를 넣어준다. 
+//	스타일 파일에서 over,down,disable 스타일 키는 normal style 키보다 순서상으로 밑에 있어야 한다.
+//-----------------------------------------------------------------------------------------
+
+class AButton extends AComponent
+{
+	constructor()
+	{
+		super()
+		
+   		this.btnStyles = ['','',''];
+		this.isTabable = true;
+	}
+
+	
+
+}
+
+window.AButton = AButton
+
+AButton.CONTEXT = 
+{
+    //tag:'<button data-base="AButton" data-class="AButton" class="AButton-Style">Button</button>',
+	tag:'<button data-base="AButton" data-class="AButton" class="AButton-Style">Button</button>',
+
+    defStyle: 
+    {
+    	width:'80px', height:'22px' 
+    },
+   
+    events: ['click', 'longtab']
+};
+
+AButton.OVER = 0;
+AButton.DOWN = 1;
+AButton.DISABLE = 2;
+
+AButton.STATE = ['over', 'down', 'disable'];
+
+AButton.NAME = "AButton";
+
+
+AButton.prototype.beforeInit = function()
+{
+	//AComponent init 시점 disabled 처리 순서 : element 세팅 > beforeInit 호출 > enable 처리
+	//beforeInit에서 baseState를 세팅하지 않으면 disabled(enable false) 체크시 에러남
+	this.saveBaseState();
+	
+	for(var i=0; i<AButton.STATE.length; i++)
+		this.btnStyles[i] = this.getAttr('data-style-' + AButton.STATE[i]);
+		
+	this.$img = this.$ele.children();
+};
+
+AButton.prototype.init = function(context, evtListener)
+{
+	AComponent.prototype.init.call(this, context, evtListener);
+	
+	//로컬라이징 함수가 호출되므로 
+	//여기서 하면 안되고 beforeInit 에서 셋팅해 줘야 함.
+	//this.$img = this.$ele.children();
+	
+	this.setOption(
+	{
+		imgAfterText: this.$ele.attr('data-aftertext'),	//이미지가 텍스트 뒤로 갈지 여부
+		imgNewLine: this.$ele.attr('data-newline'),		//버튼과 이미지 줄바꿈 여부
+		isToolBtn: this.getAttr('data-tool-button'),
+		isCheckBtn: this.getAttr('data-check-button'),		//체크용 버튼인지
+		autoDownState: !this.getAttr('data-off-downstate')	//자동으로 버튼 다운 상태를 변경해 줄지
+		
+	}, true);
+	
+	this.isSafeClick = !this.getAttr('data-speed-button');
+	
+	this.isChecked = false;										//체크되어 있는 상태인지
+};
+
+//AButton.prototype.setCheckButton = function(isSet) { this.isCheckBtn = isSet; };
+//AButton.prototype.setToolButton = function(isSet) { this.isToolBtn = isSet; };
+
+AButton.prototype.setCheck = function(check) 
+{
+	if(!this.option.isCheckBtn) return;
+	
+	this.isChecked = check;
+	
+	if(this.isChecked) this.changeBtnState(AButton.DOWN);
+	else this.defaultBtnState();
+};
+
+AButton.prototype.getCheck = function() 
+{ 
+	return this.isChecked;  
+};
+
+AButton.prototype.setText = function(text)
+{
+	if(!this.isValid()) return;
+
+	this.$ele.text(text);
+
+	if(this.$img)
+	{
+		if(this.option.imgAfterText) this.$ele.append(this.$img);
+		else this.$ele.prepend(this.$img);
+	}
+
+	var ele = this.element;
+	if(ele.shrinkInfo) AUtil.autoShrink(ele, ele.shrinkInfo);
+	//if(this.shrinkInfo) this.autoShrink(this.shrinkInfo);
+};
+
+AButton.prototype.getText = function()
+{
+	return this.$ele.text().trim();
+};
+
+AButton.prototype.setHtml = function(html)
+{
+	if(this.$ele)
+	{
+		this.$ele.html(html);
+	}
+};
+
+AButton.prototype.getHtml = function()
+{
+	return this.$ele.html();
+};
+
+AButton.prototype.setImage = function(url)
+{
+	if(url) 
+	{
+		if(this.$img) this.$img.remove();
+		
+		if(this.option.imgAfterText) 
+		{
+			if(this.option.imgNewLine) this.$img = $('<br><img src="' + url + '">');
+			else this.$img = $('<img src="' + url + '">');
+			
+			this.$ele.append(this.$img);
+		}
+		else 
+		{
+			if(this.option.imgNewLine) this.$img = $('<img src="' + url + '"><br>');
+			else this.$img = $('<img src="' + url + '">');
+		
+			this.$ele.prepend(this.$img);
+		}
+	}
+	else 
+	{
+		this.$img = undefined;
+		//this.option.imgAfterText = undefined;
+		//this.option.imgNewLine = undefined;
+		
+		this.$ele.removeAttr('data-aftertext');
+		this.$ele.removeAttr('data-newline');
+		this.$ele.html(this.$ele.text());
+	}
+};
+
+AButton.prototype.getImage = function()
+{
+	if(this.$img) 
+	{
+		if(this.option.imgNewLine && this.option.imgAfterText) return $(this.$img[1]).attr('src');
+		else return $(this.$img[0]).attr('src');
+	}
+	else return '';
+};
+
+
+AButton.prototype.setDefStyle = function(style)
+{
+	this.defStyle = style;
+};
+
+AButton.prototype.setBtnStyle = function(state, style)
+{
+	this.btnStyles[state] = style;
+};
+
+AButton.prototype.defaultBtnState = function()
+{
+	if(!this.isEnable) return;
+
+	this.clearStateClass();
+	this.applyBaseState();
+};
+
+AButton.prototype.clearStateClass = function()
+{
+	if(!this.isEnable) return;
+	
+	for(var i=0; i<AButton.STATE.length; i++)
+	{
+		if(this.btnStyles[i])
+			this.removeClass(this.btnStyles[i]);
+	}
+	
+	if(this.defStyle) this.removeClass(this.defStyle);
+};
+
+AButton.prototype.changeBtnState = function(newState)
+{
+	if(!this.isEnable) return;
+	
+	this.clearStateClass();
+	
+	if(this.btnStyles[newState]) 
+	{
+		this.element.style['background-color'] = this.baseState['background-color'];
+		this.addClass(this.btnStyles[newState]);
+	}
+	
+	else 
+	{
+		this.applyBaseState();
+		this[AButton.STATE[newState]+'State']();
+	}
+};
+
+AButton.prototype.enable = function(isEnable)
+{
+   	if(isEnable) 
+	{
+		AComponent.prototype.enable.call(this, isEnable);
+	
+		this.defaultBtnState();
+	}
+   	else 
+	{
+		//최초에 disabled 속성값을 enable false로 변경할 때 생기는 오류때문에 setTimeout으로 처리
+		//beforeInit에서 baseState 세팅하므로 setTimeout 제거
+		this.changeBtnState(AButton.DISABLE);
+		
+		AComponent.prototype.enable.call(this, isEnable);
+	}
+};
+
+AButton.prototype.downState = function()
+{
+	if(this.option.isToolBtn) 
+	{
+		var rt = this.getBoundRect();
+		this.$ele.css('background-position', -1*rt.width + 'px 0px');
+	}
+	
+	//밝기를 줄임
+	else if(this.option.autoDownState) this._changeBgLightness(0.15, 'important');
+};
+
+AButton.prototype.overState = function()
+{
+	if(this.option.isToolBtn) 
+	{
+		var rt = this.getBoundRect();
+		this.$ele.css('background-position', -2*rt.width + 'px 0px');
+	}
+	
+	//밝기를 늘임
+	//else this._changeBgLightness(0.05, 'important');
+	
+};
+
+AButton.prototype.disableState = function()
+{
+	if(this.option.isToolBtn) 
+	{
+		var rt = this.getBoundRect();
+		this.$ele.css('background-position', -3*rt.width + 'px 0px');
+	}
+
+	else this.downState();
+};
+
+AButton.prototype.applyBaseState = function()
+{
+	//this.$ele.css(this.baseState);
+	
+	if(this.option.isToolBtn) 
+	{
+		this.$ele.css('background-position', '0px 0px');
+	}
+	else
+	{
+		if(this.defStyle) this.addClass(this.defStyle);
+		
+		this.setStyle('background-color', this.baseState['background-color']);
+		//this.element.style['border'] = this.baseState['border'];
+	}
+	
+};
+
+AButton.prototype.saveBaseState = function()
+{
+	this.defStyle = this.getAttr('data-style');
+	
+	this.baseState = 
+	{
+		'background-color': this.element.style['background-color'],
+		//'border': this.element.style['border']
+	};
+};
+
+AButton.prototype._getLastBgColor = function($ele)
+{
+	var color = $ele.css('background-color');
+
+	//html 태그까지 올라가면 중단한다.
+	if($ele[0].tagName=='HTML') color = 'rgb(255,255,255)';
+	
+	if(color=='transparent') 
+		return this._getLastBgColor($ele.parent());
+	
+	color = color.match(/\d+/g);
+	
+	//afc.log(color);
+		
+	if(color.length==4 && color[3]=='0')
+		return this._getLastBgColor($ele.parent());
+	
+	return color;
+};
+
+//내부적으로 밝은 것은 어둡게 어두운 것은 발게 처리함(lightness 0.5 기준)
+//그러므로 value 는 줄이거나 늘이려는 실제값(0.0 < value < 0.5)  내부적으로만 사용
+AButton.prototype._changeBgLightness = function(value, important)
+{
+	var rgbArr = this._getLastBgColor(this.$ele), alpha = '';
+		
+	if(rgbArr.length==4) alpha = ',' + rgbArr[3];
+	
+	hslArr = AUtil.RgbToHsl(rgbArr[0], rgbArr[1], rgbArr[2]);
+	
+	//밝기 조절
+	if(hslArr[2]<0.5) hslArr[2] += value;
+	else hslArr[2] -= value;
+	
+	//css 형식에 맞게 값 변환
+	hslArr[0] *= 360, hslArr[1] *= 100, hslArr[2] *= 100;
+	
+	var hslVal = 'hsl(' + hslArr[0] + ',' + hslArr[1] + '%,' + hslArr[2] + '%' + alpha + ')';
+	//console.log(hslVal);
+	
+	this.element.style.setProperty('background-color', hslVal, important);
+};
+
+/*
+AButton.prototype.changeOppositeColor = function(colorKey, important)
+{
+	var color = this.$ele.css(colorKey),
+		rgbArr = color.match(/\d+/g);
+
+	var oppArr = AUtil.OppositeColor(rgbArr[0], rgbArr[1], rgbArr[2]);
+	this.element.style.setProperty(colorKey, 'rgb('+ oppArr.join() + ')', important);
+
+};
+*/
+
+AButton.prototype.setData = function(data)
+{
+	this.data = data;
+};
+
+AButton.prototype.getData = function()
+{
+	return this.data;
+};
+
+AButton.prototype.getQueryData = function(dataArr, keyArr, queryData)
+{
+	if(!keyArr) return;
+	if(!dataArr || dataArr.length == 0) return;
+	
+	if(this.data) dataArr[0][keyArr[0]] = this.data;
+};
+
+AButton.prototype.setQueryData = function(dataArr, keyArr, queryData)
+{
+	if(!keyArr) return;
+	
+	this.data = dataArr[0][keyArr[0]];
+};
+
+AButton.prototype.setIconMargin = function(value)
+{
+	var $img = this.$ele.children('img');
+	
+	if($img.length>0) $img[0].style['margin'] = value;
+};
+
+AButton.prototype.getIconMargin = function()
+{
+	var $img = this.$ele.children('img');
+	
+	if($img.length>0) return $img[0].style['margin'];
+	else return '';
+};
+
+AButton.prototype.setIconSize = function(value)
+{
+	var $img = this.$ele.children('img');
+	
+	if($img.length>0) 
+	{
+		value = $.trim(value).split(' ');
+		
+		$img[0].style.width = value[0] || "auto";
+		$img[0].style.height = value[1] || "auto";
+		
+		if($img[0].style.width == "auto") $img[0].style.width = ""
+		if($img[0].style.height == "auto") $img[0].style.height = ""
+		
+	}
+};
+
+AButton.prototype.getIconSize = function()
+{
+	var $img = this.$ele.children('img'), retVal = '';
+	
+	if($img.length>0)
+	{	
+		retVal = $img[0].style.width
+		retVal += $img[0].style.height? ' ' + $img[0].style.height : ''
+	}
+	
+	return retVal;
+};
+
+//button 의 각 data-style-xxx 값만 얻어서 리턴
+AButton.prototype._getDataStyleObj = function()
+{
+	var ret = AComponent.prototype._getDataStyleObj.call(this);
+		
+	var keyArr = ['data-style-over', 'data-style-down', 'data-style-disable'], val;
+	
+	for(var i=0; i<keyArr.length; i++)
+	{
+		val = this.getAttr(keyArr[i]);
+
+		//attr value 에 null 이나 undefined 가 들어가지 않도록
+		ret[keyArr[i]] = val ? val : '';
+	}
+	
+	return ret;
+};
+
+// object 형식의 css class 값을 컴포넌트에 셋팅한다.
+// default style 값만 셋팅한다.
+AButton.prototype._setDataStyleObj = function(styleObj)
+{
+	for(var p in styleObj)
+	{
+		if(p==afc.ATTR_STYLE) this._set_class_helper(this.$ele, null, styleObj, afc.ATTR_STYLE);	//바로 화면에 적용
+		
+		//attr 값만 셋팅
+		else this.setAttr(p, styleObj[p]);											
+	}
+};
+
+
+/**
+ * @author asoocool
+ */
  
 //------------------------------------------------------------------------
 //	뷰에는 내부에 다른 뷰를 로드하는 기능이 없도록 한다. 
@@ -24618,6 +26146,316 @@ AFloat.prototype._checkBg = function(cntr)
 
 
 /**
+ * @author bks
+ * @working date 2017-08-18
+ */
+ 
+class AToast extends AFloat
+{
+	constructor()
+	{
+		super()
+	
+		this.isBgCheck = false;
+		this.curSpan = null;
+
+		this.divCss = {
+			'position': 'absolute',
+			'width': '100%',
+			'bottom': '100px',
+			'text-align': 'center',
+			'z-index': '2147483647'
+		};
+
+		this.spanCss = [
+			'background-color:rgba(32, 32, 32, 0.7)',
+			'border-radius:6px',
+			'color:#fff',
+			'padding:20px',
+			'margin:20px',
+			'box-shadow:3px 3px 8px #222222',
+			'font-size:20px',
+			'white-space:pre-line',
+			'display:inline-block',
+			'word-break:break-all'
+		];
+	}
+
+	
+	
+}
+
+window.AToast = AToast
+
+AToast.globalToast = null;
+AToast.single = function(){
+	AToast.globalToast = new AToast();
+};
+
+AToast.show = function(text, duration)
+{
+	var toast;
+	if(AToast.globalToast) toast = AToast.globalToast;
+	else toast = new AToast();
+	toast.show(text, duration);
+};
+
+AToast.callback = function(text, callback, duration)
+{
+	var toast;
+	if(AToast.globalToast) toast = AToast.globalToast;
+	else toast = new AToast();
+	toast.callback(text, callback, duration);
+};
+
+
+AToast.prototype.init = function()
+{
+	AFloat.prototype.init.call(this);
+	
+};
+
+AToast.prototype._createSpan = function(text)
+{
+	this.curSpan =  document.createElement('span');
+	this.curSpan.style.cssText = this.spanCss.join(";");
+	this.curSpan.innerHTML = text;
+};
+
+AToast.prototype.show = function(text, duration)
+{
+	if(this.curSpan) this.curSpan.innerHTML = text;
+	else
+	{
+		var thisObj = this;
+		if(!duration) duration = 2;	
+		
+		this.init();	//Toast div 생성
+		
+		this._createSpan(text);	//Toast Span 생성
+
+		AFloat.prototype.append.call(this, this.curSpan);	//Toast 객체 삽입
+		//this.$frame.addClass('show-toast' + duration);
+
+		//Toast DIV css 정보 추가
+		AFloat.prototype.popupEx.call(this, this.divCss, null);
+		
+		setTimeout(function(){
+			thisObj.curSpan = null;
+			AFloat.prototype.close.call(thisObj);
+		}, duration*1000);
+
+	}
+};
+
+/*
+AToast.prototype.close = function()
+{
+	AFloat.prototype.close.call(this);
+
+};
+*/
+
+AToast.prototype.callback = function(text, callback, duration)
+{
+	callback({"proc": "start"});
+	
+	if(this.curSpan) this.curSpan.innerHTML = text;
+	else
+	{
+		var thisObj = this;
+		if(!duration) duration = 2;	
+		
+		this.init();	//Toast div 생성
+		
+		this._createSpan(text);	//Toast Span 생성
+
+		AFloat.prototype.append.call(this, this.curSpan);	//Toast 객체 삽입
+		//this.$frame.addClass('show-toast' + duration);
+
+		//Toast DIV css 정보 추가
+		AFloat.prototype.popupEx.call(this, this.divCss, null);
+		
+		setTimeout(function(){
+			thisObj.curSpan = null;
+			AFloat.prototype.close.call(thisObj);
+			
+			callback({"proc": "end"});
+		}, duration*1000);
+
+	}
+};
+
+
+
+/**
+ * @author bks
+ * @working date 2017-08-18
+ */
+ 
+class AIndicator extends AFloat
+{
+	constructor()
+	{
+		super()
+	
+		this.isFocusLostClose = false;
+		this.indiSpan = null;
+		this.spinClassName = 'loader_type2';
+
+		this.divCss = {
+			'position': 'absolute',
+			'width': '100%',
+			'height': '100%',
+			//'z-index': '2147483647',
+			'background': 'rgba(0,0,0,0)'
+		};
+
+		this.spanCss = [
+			'box-shadow:2px 2px 5px rgba(34, 34, 34, 0.5)',
+			'-webkit-filter: drop-shadow(2px 2px 5px rgba(34, 34, 34, 0.5))',
+			'-moz-filter: drop-shadow(2px 2px 5px rgba(34, 34, 34, 0.5))',
+			'-ms-filter: drop-shadow(2px 2px 5px rgba(34, 34, 34, 0.5))',
+			'-o-filter: drop-shadow(2px 2px 5px rgba(34, 34, 34, 0.5))',
+			'filter: drop-shadow(2px 2px 5px rgba(34, 34, 34, 0.5))'
+		];
+	}
+	
+}
+
+window.AIndicator = AIndicator
+
+AIndicator.indicator = null;
+AIndicator.prgRefCount = 0;
+AIndicator.isOltp = false;
+
+AIndicator.setBackground = function(background)
+{
+	if(!AIndicator.indicator) AIndicator.indicator = new AIndicator();
+	AIndicator.indicator.divCss.background = background || 'rgba(0,0,0,0)';
+};
+
+AIndicator.setClass = function(cssName)
+{
+	if(!AIndicator.indicator) AIndicator.indicator = new AIndicator();
+	AIndicator.indicator.setClassName(cssName);
+};
+
+AIndicator.show = function()
+{
+	if(AIndicator.isOltp) return;
+	if(++AIndicator.prgRefCount>1) return;
+
+	if(AIndicator.timeout)
+	{
+		clearTimeout(AIndicator.timeout);
+		AIndicator.timeout = null;
+		return;
+	}
+	
+	if(!AIndicator.indicator) AIndicator.indicator = new AIndicator();
+	AIndicator.indicator.show();
+};
+
+AIndicator.hide = function()
+{
+	if(AIndicator.isOltp || AIndicator.prgRefCount==0) return;
+	if(--AIndicator.prgRefCount>0) return;
+	
+	if(AIndicator.timeout)
+	{
+		clearTimeout(AIndicator.timeout);
+		AIndicator.timeout = null;
+	}
+
+	//show 상태에서 hide, show 호출되면 인디케이터가 사라졌다 보임처리 되므로
+	//연속성을 위해 setTimeout 으로 숨김처리한다.
+	AIndicator.timeout = setTimeout(function()
+	{
+		AIndicator.timeout = null;
+		if(AIndicator.indicator) AIndicator.indicator.hide();
+	});
+};
+
+AIndicator.beginOltp = function()
+{
+	if(AIndicator.isOltp) return;
+	//oltp가 아니고 프로그레스가 더 있으면 무조건 제거
+	if(AIndicator.prgRefCount>0) AIndicator.endOltp();
+	
+	AIndicator.prgRefCount = 0;
+	AIndicator.show();
+	AIndicator.isOltp = true;
+};
+
+AIndicator.endOltp = function()
+{
+	AIndicator.isOltp = false;
+	AIndicator.prgRefCount = 1;
+	AIndicator.hide();
+};
+
+AIndicator.prototype.init = function()
+{
+	AFloat.prototype.init.call(this);
+	
+};
+
+AIndicator.prototype.setClassName = function(cssName)
+{
+	this.spinClassName = cssName||'loader_type2';
+	
+	if(this.indiSpan) this.indiSpan.setAttribute('class', this.spinClassName);
+};
+
+AIndicator.prototype.createSpan = function()
+{
+	this.indiSpan = document.createElement('div');
+	//this.indiSpan.style.cssText = this.spanCss.join(";");
+	//this.indiSpan.setAttribute('class', 'loadspin-box');
+	
+	this.indiSpan.setAttribute('class', this.spinClassName);
+};
+
+AIndicator.prototype.show = function()
+{
+	AIndicator.isShow = true;
+
+	if(!afc.isSimulator && window.cordova) window.cordova.exec( null , null, "AppPlugin" , "progress", [AppManager.PROGRESS_SHOW]);
+	else 
+	{
+		this.init();	//Indicator div 생성		
+		
+		this.createSpan();	//Indicator Span 생성
+		
+		this.append(this.indiSpan);	//Indicator 객체 삽입
+
+		//Toast DIV css 정보 추가
+		this.popupEx(this.divCss, null);
+
+	}
+
+};
+
+
+AIndicator.prototype.hide = function()
+{
+	AIndicator.isShow = false;
+	
+	if(!afc.isSimulator && window.cordova) window.cordova.exec( null , null, "AppPlugin" , "progress", [AppManager.PROGRESS_HIDE]);
+	else
+	{
+		if(this.$frame) 
+		{
+			this.indiSpan = null;		
+			this.close();
+		}
+	}
+};
+
+
+
+/**
  * @author asoocool
  */
  
@@ -25650,6 +27488,39 @@ AContainer.prototype.findCompByGroup = function(strGroup)
 
 //-----------------------------------------------------------------------
 
+                 
+/**
+ * @author asoocool
+ */
+
+//--------------------------------------------------------------------------
+//	패널의 역할은 윈도우와 같이 팝업의 기능은 없고 네비게이터에 들어갈 수 없으며 
+//	오로지 다른 컨테이너의 부분 컨테이너 역할만 할 수 있다. 
+//	→ contaier split 시에 사용한다.
+//	open 함수를 호출하여 부모의 불특정 영역에 새로운 컨테이너를 배치할 수 있다.
+//--------------------------------------------------------------------------
+
+class APanel extends AContainer
+{
+	constructor(containerId)
+	{
+		super(containerId)
+	
+	}
+
+	
+}
+
+window.APanel = APanel
+
+APanel.prototype.init = function(context)
+{
+	AContainer.prototype.init.call(this, context);
+
+	//afc.log('APanel init');
+};
+
+
 /**
  *	@author asoocool
  * 
@@ -26580,6 +28451,466 @@ APage.prototype.onBackKey = function()
     }
     
 	return false;
+};
+
+
+/**
+ * @author asoocool
+ */
+
+class ANavigator
+{
+	constructor(name, cntr)
+	{
+		if(!name) name = '_0_';
+
+		this.name = name;
+
+		this.pageHistory = [];
+
+		this.curHisIndex = -1;
+
+		this.flipType = 'normal';	//normal, slide, fade
+		this.slideDir = 'left';		//left, right, up, down
+		//this.isAsync = true;		//비동기 여부
+		this.isOneshot = false;		//비활성화 시 페이지를 close 할 지.
+		this.isDeactiveGone = true;	//페이지가 비활성화 될 경우 gone 시킬 지(돔 트리에서 제거), false 는 돔트리에는 남겨 놓고 hidden 만 시킨다.
+									//false 는 페이지 전환이 좀 더 빠르지만 페이지가 많아질 경우 element 가 지속적으로 쌓여 element 의 추가/제거가 느려지는 등의 성능저하가 온다.
+									//true 는 페이지가 많아져도 성능의 저하는 없지만 활성/비활성화 되는 페이지 내의 element 가 많을 경우 페이지 전환이 느려진다.
+
+		this.pageInfoMap = {};
+		this.activePage = null;
+
+		ANavigator.objects[name] = this;
+
+		if(!cntr) this.cntr = theApp.rootContainer;
+		else this.cntr = cntr;
+
+		//프레임 컨테이너에 자신을 셋팅
+		this.cntr.childNavigator = this;
+
+		//WebHistoryManager 를 활성화 한 경우 자동으로 등록
+		if(theApp.webHistoryMgr) theApp.webHistoryMgr.setHistoryTarget(this.name, this);
+	
+	}
+
+}
+
+window.ANavigator = ANavigator
+
+//-----------------------------------------------------------------------------
+//	static area
+ANavigator.objects = {};
+//마지막으로 이동한 네비게이터
+ANavigator.lastNavigator = null;
+
+ANavigator.find = function(name)
+{
+	if(name) return ANavigator.objects[name];
+	else return ANavigator.objects['_0_'];
+};
+
+ANavigator.getRootNavigator = function() { return theApp.rootContainer.childNavigator; };
+ANavigator.getLastNavigator = function() { return ANavigator.lastNavigator; };
+
+ANavigator.reportBackKeyEvent = function()
+{
+	var navi = ANavigator.getRootNavigator();
+	
+	if(navi)
+	{
+		var page = navi.getActivePage();
+		if(page) return page.onBackKey();
+	}
+	
+	return false;
+};
+
+//---------------------------------------------------------------------------------
+
+
+//normal, slide, fade
+ANavigator.prototype.setFlipType = function(flipType)
+{
+	this.flipType = flipType;	
+};
+
+ANavigator.prototype.getFlipType = function()
+{
+	return this.flipType;
+};
+
+//left, right, up, down
+ANavigator.prototype.setSlideDir = function(slideDir)
+{
+    this.slideDir = slideDir;
+};
+
+ANavigator.prototype.getSlideDir = function()
+{
+    return this.slideDir;
+};
+
+/*
+ANavigator.prototype.enableAsync = function(enable)
+{
+    this.isAsync = enable;
+};
+*/
+
+ANavigator.prototype.enableOneshot = function(enable)
+{
+    this.isOneshot = enable;
+};
+
+ANavigator.prototype.enableDeactiveGone = function(enable)
+{
+    this.isDeactiveGone = enable;
+};
+
+
+//url 은 필수.
+ANavigator.prototype.registerPage = function(url, pageId, pageClass, cond)//, isAsync)
+{
+	var infoArray = this.pageInfoMap[pageId];
+	
+	//cond is condition variable, 조건에 맞는 페이지를 리턴하기위해
+	var newInfo = { url: url, pageId: pageId+'_0', cond: cond, pageClass: pageClass, pageObj: null }; //, isAsync: isAsync };	
+		
+	if(!infoArray) 
+	{
+		infoArray = new Array();
+		this.pageInfoMap[pageId] = infoArray;
+	}
+	//같이 페이지 아이디로 페이지 정보가 존재하면 아이디 숫자를 하나 높여 추가한다.
+	else 
+	{
+		newInfo.pageId = pageId+'_'+infoArray.length;
+	}
+
+	infoArray.push(newInfo);
+	
+	if(!pageClass) newInfo.pageClass = 'APage'; //afc.ClassName.PAGE;
+
+    return newInfo;
+};
+
+ANavigator.prototype.registerPageEx = function(pageInfo)
+{
+	return this.registerPage(pageInfo.url, pageInfo.pageId, pageInfo.pageClass, pageInfo.cond);//, pageInfo.isAsync);
+};
+
+ANavigator.prototype.unRegisterPage = function(pageId)
+{
+	var infoArray = this.pageInfoMap[pageId];
+	if(!infoArray) return;
+	
+	var obj = null, def = null;
+	for(var i=0; i<infoArray.length; i++)
+	{
+		obj = infoArray[i];
+		
+		if(obj.pageObj)
+		{
+			obj.pageObj.close();
+			obj.pageObj = null;
+		}
+	}
+	
+	delete this.pageInfoMap[pageId];
+};
+
+//cond 옵션을 비교하여 tabId 를 리턴한다.
+ANavigator.prototype.getPageInfo = function(pageId)
+{
+	var infoArray = this.pageInfoMap[pageId];
+	if(!infoArray) return null;
+	
+	var obj = null, def = null;
+	for(var i=0; i<infoArray.length; i++)
+	{
+		obj = infoArray[i];
+		
+		//조건을 지정하지 않은 페이지가 기본 페이지이다.
+		if(!obj.cond) def = obj;
+		//조건을 만족하면 바로 리턴
+		else if(obj.cond.call(this, obj)) return obj;
+	}
+	
+	return def;
+};
+
+ANavigator.prototype.getPage = function(pageId)
+{
+	var pageInfo = this.getPageInfo(pageId);
+	
+	if(pageInfo) return pageInfo.pageObj;
+	else return null;
+};
+
+ANavigator.prototype.pushHistory = function(page)
+{
+	this.curHisIndex++;
+    this.pageHistory.length = this.curHisIndex;
+    this.pageHistory.push(page);
+};
+
+ANavigator.prototype.flipPage = function(willActivePage, isFirst)
+{
+	var thisObj = this, willDeactivePage = this.activePage;
+	
+	this.isTabFlipping = true;
+	
+	ANavigator.lastNavigator = this;
+	
+	willActivePage.onWillActive(isFirst);
+	if(willDeactivePage) willDeactivePage.onWillDeactive();
+	
+	if(this.flipType=='normal')
+	{
+		//willActivePage.show();
+		
+		if(this.isDeactiveGone) willActivePage.show();
+		else willActivePage.$ele.css({'visibility': 'visible', 'height':'100%'});
+		
+		willActivePage.onActive(isFirst);
+
+		if(willDeactivePage) 
+		{
+			//willDeactivePage.hide();
+			if(this.isDeactiveGone) willDeactivePage.hide();
+			else willDeactivePage.$ele.css({'visibility': 'hidden', 'height': '0px'});
+			
+			willDeactivePage.onDeactive();
+		}
+		
+		setTimeout(function() 
+		{
+			_effectDone();
+		}, 0);
+	}
+	
+	else if(this.flipType=='slide')
+	{
+		//willActivePage.show();
+		if(this.isDeactiveGone) willActivePage.show();
+		else willActivePage.$ele.css({'visibility': 'visible', 'height':'100%'});
+		
+		willActivePage.$ele.addClass('slide-in-'+this.slideDir);
+		willActivePage.onActive(isFirst);
+		
+		if(willDeactivePage)
+		{
+			willDeactivePage.$ele.addClass('slide-out-'+this.slideDir);
+			willDeactivePage.onDeactive();
+		}
+		
+		willActivePage.$ele.one('webkitAnimationEnd', function()
+		{
+			if(willDeactivePage) 
+			{
+				willDeactivePage.$ele.removeClass('slide-out-'+thisObj.slideDir);
+				//willDeactivePage.$ele.hide();
+				
+				if(thisObj.isDeactiveGone) willDeactivePage.hide();
+				else willDeactivePage.$ele.css({'visibility': 'hidden', 'height': '0px'});
+				
+			}
+
+			willActivePage.$ele.removeClass('slide-in-'+thisObj.slideDir);
+
+			_effectDone();
+		});
+	}
+	
+	this.activePage = willActivePage;
+	
+
+	function _effectDone() 
+	{
+		if(willActivePage.isValid())
+		{
+			willActivePage.onResize();
+			willActivePage.onActiveDone(isFirst);
+		}
+		
+		if(willDeactivePage && willDeactivePage.isValid()) 
+		{
+			willDeactivePage.onDeactiveDone();
+			
+			if(willDeactivePage.option.isOneshot) thisObj.closePage(willDeactivePage.getContainerId());
+		}
+		
+		thisObj.isTabFlipping = false;
+	}
+};
+
+ANavigator.prototype.goPage = async function(pageId, data, isNoHistory)
+{
+	var pageInfo = this.getPageInfo(pageId);
+	
+	//없는 페이지이면 리턴 
+	if(!pageInfo) return null;
+	
+	var isFirst = false;
+	if(!pageInfo.pageObj)
+	{
+		pageInfo.pageObj = new window[pageInfo.pageClass](pageId);
+		pageInfo.pageObj.navigator = this;
+		//pageInfo.pageObj.url = pageInfo.url;
+		
+		// 최초페이지인 경우 init 시점에 데이터를 세팅해준다.
+		pageInfo.pageObj.setData(data);
+		
+		//pageInfo.pageObj.setOption({ isAsync: this.isAsync, isOneshot: this.isOneshot });
+		
+		//값을 셋팅하지 않은 경우는 AContainer 의 기본값이 작동되도록
+		var optObj = { isOneshot: this.isOneshot };
+		//if(pageInfo.isAsync!=undefined) optObj['isAsync'] = pageInfo.isAsync;
+		
+		pageInfo.pageObj.setOption(optObj); 
+		await pageInfo.pageObj.open(pageInfo.url, this.cntr);
+		if(!this.isDeactiveGone) pageInfo.pageObj.$ele.css('overflow', 'hidden');
+		
+		isFirst = true;
+	}
+	
+	//현재 액티브된 페이지를 다시 호출한 경우는 제외
+	if(pageInfo.pageObj!==this.activePage)
+	{
+		// 최초 페이지가 아닌 경우에만 active 시점에 데이터를 세팅해준다.
+		if(!isFirst)
+		{
+			pageInfo.pageObj.pageData = data;	//deprecated
+			pageInfo.pageObj.setData(data);
+		}
+		
+		this.flipPage(pageInfo.pageObj, isFirst);
+
+		if(!isNoHistory) 
+		{
+			this.pushHistory(pageInfo.pageObj);
+			
+			if(theApp.webHistoryMgr) theApp.webHistoryMgr.pushHistory({target:this.name, id:pageId});
+		}
+	}
+	
+	return pageInfo.pageObj;
+};
+
+ANavigator.prototype.goPrevPage = function(data)
+{
+	if(this.canGoPrev())
+	{
+		this.curHisIndex--;
+		var page = this.pageHistory[this.curHisIndex];
+		
+		page.pageData = data;	//deprecated
+		page.setData(data);
+		
+		if(page.isValid()) this.flipPage(page, false);
+		else this.pageHistory[this.curHisIndex] = this.goPage(page.getContainerId(), data, true);
+		
+		return true;
+	}
+	
+	return false;
+};
+
+ANavigator.prototype.goNextPage = function(data)
+{
+	if(this.canGoNext())
+	{
+		this.curHisIndex++;
+		var page = this.pageHistory[this.curHisIndex];
+		
+		page.pageData = data;	//deprecated
+		page.setData(data);
+		
+		if(page.isValid()) this.flipPage(page, false);
+		else this.pageHistory[this.curHisIndex] = this.goPage(page.getContainerId(), data, true);
+		
+		return true;
+	}
+	
+	return false;
+};
+
+ANavigator.prototype.getPrevPage = function()
+{
+	if(this.canGoPrev())
+	{
+		return this.pageHistory[this.curHisIndex-1];
+	}
+};
+
+ANavigator.prototype.getNextPage = function()
+{
+	if(this.canGoNext())
+	{
+		return this.pageHistory[this.curHisIndex+1];
+	}
+};
+
+ANavigator.prototype.getActivePage = function()
+{
+    return this.activePage;
+};
+
+ANavigator.prototype.canGoPrev = function()
+{
+	return (this.curHisIndex>0);
+};
+
+ANavigator.prototype.canGoNext = function()
+{
+	return (this.curHisIndex<this.pageHistory.length-1);
+};
+
+ANavigator.prototype.clearHistory = function()
+{
+	this.pageHistory.length = 0;
+	this.curHisIndex = -1;
+};
+
+ANavigator.prototype.closePage = function(pageId)
+{
+	var pageInfo = this.getPageInfo(pageId);
+	
+	if(pageInfo && pageInfo.pageObj)
+	{
+		if(pageInfo.pageObj == this.activePage) this.activePage = null;
+		pageInfo.pageObj.close();
+		pageInfo.pageObj = null;
+	}
+};
+
+ANavigator.prototype.closeAllPage = function()
+{
+	var pageInfo, pageId;
+	
+	for(pageId in this.pageInfoMap)
+	{
+		this.closePage(pageId);
+	}
+	this.activePage = null;
+};
+
+ANavigator.prototype.onResize = function()
+{
+	/*
+	var pageInfo, pageId;
+	
+	for(pageId in this.pageInfoMap)
+	{
+		pageInfo = this.getPageInfo(pageId);
+			
+		if(pageInfo.pageObj) pageInfo.pageObj.onResize();
+	}
+	*/
+	var page = this.getActivePage();
+	
+	if(page) page.onResize();
 };
 
 
@@ -27996,6 +30327,195 @@ AEvent.prototype.onKeyUp = function(e)
 };
 
 
+               
+/**
+ * @author asoocool
+ */
+
+class AButtonEvent extends AEvent
+{
+	constructor(acomp)
+	{
+		super(acomp);
+		
+		this.keyDownVal = false;
+	}
+}
+window.AButtonEvent = AButtonEvent;
+
+
+//	overloading functions
+
+AButtonEvent.prototype.actionDownState = function()
+{
+	AComponent.setFocusComp(this.acomp);
+
+	this.acomp.changeBtnState(AButton.DOWN);
+};
+
+/*
+AButtonEvent.prototype.actionMoveState = function()
+{
+	this.acomp.defaultBtnState();
+};
+*/
+
+AButtonEvent.prototype.actionUpState = function()
+{
+	if(this.acomp.option.isCheckBtn)
+	{
+		//모바일인 경우 long press 를 하게 되면 click 이벤트가 발생하지 않으므로 
+		//버튼 모양도 원상태로 리셋한다.
+		if(afc.isMobile && Date.now()-AEvent.TOUCHTIME > AEvent.LONGPRESS_TIME) this.acomp.setCheck(this.acomp.getCheck());
+	}
+	else
+	{
+		if(afc.isPC) this.acomp.changeBtnState(AButton.OVER);
+		else this.acomp.defaultBtnState();
+	}
+};
+
+AButtonEvent.prototype.actionCancelState = function()
+{
+	if(this.acomp.option.isCheckBtn && this.acomp.getCheck()) return;
+	
+	this.acomp.defaultBtnState();
+};
+
+AButtonEvent.prototype.actionEnterState = function()
+{
+	if(this.acomp.option.isCheckBtn && this.acomp.getCheck()) return;
+	
+	this.acomp.changeBtnState(AButton.OVER);
+};
+
+AButtonEvent.prototype.actionLeaveState = function()
+{
+	if(this.acomp.option.isCheckBtn && this.acomp.getCheck()) return;
+	
+	this.acomp.defaultBtnState();
+};
+
+AButtonEvent.prototype.actionClickState = function()
+{
+	if(this.acomp.option.isCheckBtn)
+	{
+		this.acomp.setCheck(!this.acomp.getCheck());
+	}
+};
+
+AButtonEvent.prototype.defaultAction = function()
+{
+	this._click();
+	this._keydown();
+	this._keyup();
+
+	if(afc.isPC)
+	{
+		this._actionenter();
+		this._actionleave();
+	}
+};
+
+//---------------------------------------------------------------------------------------------------
+//	Component Event Functions
+
+
+//defaultAction 에서 호출했기 때문에 
+//이벤트가 등록되어 있어도 호출되지 않도록 인터페이스를 닫는다.
+AButtonEvent.prototype.actionenter = null;
+AButtonEvent.prototype.actionleave = null;
+AButtonEvent.prototype.keydown = null;
+AButtonEvent.prototype.keyup = null;
+//AButtonEvent.prototype.click = null;	//클릭은 기본 이벤트가 아니므로 안 해줘도 됨.
+
+//default _keydown 이벤트에서 커스텀 _keydown 이벤트로 변경
+AButtonEvent.prototype.onKeyDown = function(e)
+{	
+	//if(this.acomp!==AComponent.getFocusComp()) return;
+	
+	if(!this.acomp.keyPropagation)
+	{
+		e.stopPropagation();
+		
+		if(e.keyCode == 9)
+		{
+			var acont = this.acomp.getContainer();
+			if(acont && acont.tabKey)
+			{
+				var nextComp = acont.tabKey.findNextTab(this.acomp, e.shiftKey);
+				if(nextComp) 
+				{
+					nextComp.setFocus();
+					e.preventDefault();
+				}
+			}
+		}
+	}
+		
+	if(e.keyCode == 13 || e.keyCode == 32)	//enter and space
+	{	
+		if(!this.keyDownVal)
+		{
+			this.keyDownVal = true;
+			this.actionDownState();
+		}
+	}
+	
+	this.acomp.reportEvent('keydown', null, e);
+	
+	//return (this.acomp.keyPropagation == false);
+};
+
+//default _keyup 이벤트에서 커스텀 _keyup 이벤트로 변경
+AButtonEvent.prototype.onKeyUp = function(e)
+{	
+	//if(this.acomp!==AComponent.getFocusComp()) return;
+	
+	if(!this.acomp.keyPropagation) e.stopPropagation();
+		
+	if(e.keyCode == 13 || e.keyCode == 32)	//enter and space
+	{
+		this.keyDownVal = false;
+		this.actionUpState();
+		this.acomp.defaultBtnState();
+		//this.acomp.reportEvent('click', null, e);
+	}
+	
+	this.acomp.reportEvent('keyup', null, e);
+	
+	//return (this.acomp.keyPropagation == false);
+};
+
+AButtonEvent.prototype.longtab = function()
+{
+	this._longtab();
+};
+
+//---------------------------------------------------------------------------------------------------
+
+AButtonEvent.prototype._keydown = function()
+{
+	var thisObj = this;
+	
+	this.acomp.$ele.on('keydown', function(e) 
+	{
+		//console.log(e.keyCode + '----> keydown');
+		thisObj.onKeyDown(e);
+	});
+};
+
+AButtonEvent.prototype._keyup = function()
+{
+	var thisObj = this;
+	
+	this.acomp.$ele.on('keyup', function(e) 
+	{
+		//console.log(e.keyCode + '----> keyup');
+		thisObj.onKeyUp(e);
+	});
+};
+
 
 /**
  * @author asoocool
@@ -28145,23 +30665,78 @@ AViewEvent.prototype._scroll = function()
 	});
 };
 
+
+
+
+var mdfc = 
+{
+	
+};
+
+afc.ClassName.HTMLEDITOR = 'HtmlEditor';
+afc.ClassName.FILEUPLOADER = 'FileUploader';
+afc.ClassName.PAGING = 'Paging';
+
+mdfc.compLabel = 
+{
+	"FileUploader" : "FileUploader",
+	"ACalendarPicker" : "CalendarPicker",
+	"Paging" : "Paging",
+	"AFlowOneLine" : "AFlowOneLine",
+	"AFlowTwoLine" : "AFlowTwoLine",
+	"AFlowThreeLine" : "AFlowThreeLine"
+};
+
+/*
+mdfc.defaultLib = 
+{
+	"library":
+	[
+		"mdfc.js"
+	],
+	
+	"component":
+	[
+	],
+	
+	"event":
+	[
+	],
+	
+	"style":
+	[
+		"comp.css",
+		"black.css"
+	]
+};
+*/
+
 afc.scriptMap["Framework/afc/library/jquery-core.js"] = true;
 afc.scriptMap["Framework/afc/library/jquery-ui.js"] = true;
 afc.scriptMap["Framework/afc/library/jquery.ui.touch-punch.js"] = true;
 afc.scriptMap["Framework/afc/library/ARect.js"] = true;
 afc.scriptMap["Framework/afc/library/AUtil.js"] = true;
 afc.scriptMap["Framework/afc/library/afc.js"] = true;
+afc.scriptMap["Framework/afc/library/ASplitter.js"] = true;
+afc.scriptMap["Framework/afc/library/ADataMask.js"] = true;
 afc.scriptMap["Framework/afc/library/TabKeyController.js"] = true;
 afc.scriptMap["Framework/afc/library/ScrollManager.js"] = true;
 afc.scriptMap["Framework/afc/library/PosUtil.js"] = true;
 afc.scriptMap["Framework/afc/library/LocalizeManager.js"] = true;
 afc.scriptMap["Framework/afc/component/AComponent.js"] = true;
 afc.scriptMap["Framework/afc/component/ALayout.js"] = true;
+afc.scriptMap["Framework/afc/component/AButton.js"] = true;
 afc.scriptMap["Framework/afc/component/AView.js"] = true;
 afc.scriptMap["Framework/afc/component/AFloat.js"] = true;
+afc.scriptMap["Framework/afc/component/AToast.js"] = true;
+afc.scriptMap["Framework/afc/component/AIndicator.js"] = true;
 afc.scriptMap["Framework/afc/component/AContainer.js"] = true;
+afc.scriptMap["Framework/afc/component/APanel.js"] = true;
 afc.scriptMap["Framework/afc/component/AWindow.js"] = true;
 afc.scriptMap["Framework/afc/component/APage.js"] = true;
+afc.scriptMap["Framework/afc/component/ANavigator.js"] = true;
 afc.scriptMap["Framework/afc/component/AApplication.js"] = true;
 afc.scriptMap["Framework/afc/event/AEvent.js"] = true;
+afc.scriptMap["Framework/afc/event/AButtonEvent.js"] = true;
 afc.scriptMap["Framework/afc/event/AViewEvent.js"] = true;
+afc.scriptMap["Framework/mdfc/library/mdfc.js"] = true;

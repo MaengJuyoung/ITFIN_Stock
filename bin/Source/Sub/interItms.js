@@ -11,10 +11,8 @@ interItms = class interItms extends AView
 	{
 		super.init(context, evtListener)
 
-        const myStock = JSON.parse(localStorage.getItem('myStock'));
-        myStock.forEach(interGrps => {
-            this.interGrp.addItem(interGrps.interGrp);
-        })
+        this.interGrpSelectBox();
+        
 	}
 
 	onInitDone()
@@ -51,15 +49,79 @@ interItms = class interItms extends AView
 
         
         if (group.includes(this.data.itmsNm)) {  // 이미 저장되어 있는지 확인
-            return alert("이미 관심 종목에 추가되어 있습니다.");
+            return thisObj.showToast("이미 관심 종목에 추가되어 있습니다.");
         }
 
         group.push(this.data.itmsNm);
 
         // 업데이트된 데이터를 다시 저장
         localStorage.setItem("myStock", JSON.stringify(myStock));
-        alert("관심 종목에 추가되었습니다!");
+        thisObj.showToast("관심 종목에 추가되었습니다!");
         this.getContainer().close(1);
+    }
+
+    // 그룹 추가 버튼 클릭 시 
+	onAddGroupBtnClick(comp, info, e)
+	{
+        const thisObj = this;
+
+        thisObj.addGroupView.element.style.display = 'block';
+        thisObj.groupTextField.setFocus();
+        
+	}
+
+    // 그룹 추가 취소 버튼 클릭 시 
+	onAddCancelBtnClick(comp, info, e)
+	{
+        const thisObj = this;
+
+        thisObj.addGroupView.element.style.display = 'none';
+
+	}
+
+    // 그룹 추가 확인 버튼 클릭 시 
+    onGroupAddBtnClick(comp, info, e) { 
+        const thisObj = this;
+        const groupName = thisObj.groupTextField.getText().trim(); // 공백 제거
+
+        if (!groupName) {
+            thisObj.showToast('그룹 이름을 입력하세요.');
+            thisObj.groupTextField.setFocus();
+            return;
+        }
+
+        const myStock = JSON.parse(localStorage.getItem('myStock'));
+
+        // 그룹 이름 중복 확인
+        const isDuplicate = myStock.some(grp => grp.interGrp === groupName);
+        if (isDuplicate) {
+            thisObj.showToast("중복된 그룹 이름입니다. 다른 이름을 입력하세요."); 
+            thisObj.groupTextField.setFocus();
+            return;
+        }
+
+        // 새로운 그룹 추가
+        myStock.push({ interGrp: groupName, interItms: [] });
+        thisObj.groupTextField.setText(""); // 입력 필드 초기화
+        thisObj.addGroupView.element.style.display = 'none';
+
+        localStorage.setItem("myStock", JSON.stringify(myStock)); // 로컬 스토리지에 저장
+        this.interGrpSelectBox(); // 그룹 리스트 갱신
+        alert("새로운 그룹이 추가되었습니다.");
+    }
+
+    // 그룹 추가 시 셀렉트 박스에 데이터 추가하는 로직
+    interGrpSelectBox(){
+        const myStock = JSON.parse(localStorage.getItem('myStock'));
+        this.interGrp.removeAll();
+        myStock.forEach(interGrps => {
+            this.interGrp.addItem(interGrps.interGrp);
+        })
+    }
+
+    // 토스트 보여주는 로직
+    showToast(message){
+        AToast.show(`${message}`);
     }
 }
 
