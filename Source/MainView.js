@@ -19,7 +19,10 @@ MainView = class MainView extends AView
         this.home.element.style.color = 'blue';
         this.label.element.style.display = 'none';
 
-
+        const defaultData = {
+            "관심그룹001": []
+        };
+        localStorage.setItem('interGrp', JSON.stringify(defaultData));
         
 	}
 
