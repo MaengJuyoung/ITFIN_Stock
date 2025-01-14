@@ -19,16 +19,20 @@ MainView = class MainView extends AView
         this.home.element.style.color = 'blue';
         this.label.element.style.display = 'none';
 
-        const defaultData = {
-            "관심그룹001": []
-        };
-        localStorage.setItem('interGrp', JSON.stringify(defaultData));
+        const myStock = [
+        {
+            interGrp: "관심그룹001",
+            interItms: [] // 관심 종목
+        }
+        ];
+        localStorage.setItem('myStock', JSON.stringify(myStock));
         
 	}
 
 	onInitDone()
 	{
 		super.onInitDone()
+
         // 메인에서 이벤트를 수신하여 스크롤 처리
         window.addEventListener('scrollToBottom', (event) => {
             window.scrollTo({   
