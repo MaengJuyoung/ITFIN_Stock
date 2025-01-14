@@ -79,15 +79,12 @@ tab1 = class tab1 extends AView
     getItemInfo(beginBasDt='', numOfRows='', pageNo='1'){
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
-
-        console.log("thisObj.getContainerView().data===",thisObj.getContainerView().data)
         const searchType = thisObj.getContainerView().data.searchType;      // 메인에서 넘어온 검색 구분
         const searchText = thisObj.getContainerView().data.searchText;      // 메인에서 넘어온 검색어
-        const formatBeginDt = thisObj.formatBeginDate(beginBasDt);
+        const formatBeginBasDt = thisObj.formatBasDate(beginBasDt);         // 날짜 포맷
 
-        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=${numOfRows}&pageNo=${pageNo}&resultType=json&beginBasDt=${formatBeginDt}`;
+        let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=${numOfRows}&pageNo=${pageNo}&resultType=json&beginBasDt=${formatBeginBasDt}`;
         url += (searchType === '종목명') ? `&likeItmsNm=${searchText}` : `&likeSrtnCd=${searchText}`;
-        console.log("url====", url)
 
         $.ajax({
             type: 'GET',
@@ -109,10 +106,10 @@ tab1 = class tab1 extends AView
     }
 
     // 날짜 조회 포맷 로직
-    formatBeginDate(beginBasDt) {
+    formatBasDate(beginBasDt) {
         const today = new Date();
         if (beginBasDt === '0') today.setMonth(today.getMonth() - 3);        // (전체) 세 달 전 날짜 계산
-        else if (beginBasDt === '1') today.setDate(today.getDate() - 2);     // 이틀 전 날짜 계산
+        else if (beginBasDt === '1') today.setDate(today.getDate() - 3);     // 3일 전 날짜 계산
         else if (beginBasDt === '2') today.setDate(today.getDate() - 7);     // 일주일 전 날짜 계산
         else if (beginBasDt === '3') today.setMonth(today.getMonth() - 1);   // 한 달 전 날짜 계산
 

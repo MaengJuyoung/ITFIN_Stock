@@ -10,7 +10,10 @@ MainView = class MainView extends AView
 	{
 		super.init(context, evtListener)
 
-        this.data = {};
+        this.data = {
+            searchType : '',
+            searchText : '',
+        };
         this.contiKey = '';
         this.getItemInfo();
         this.home.element.style.color = 'blue';
@@ -51,13 +54,24 @@ MainView = class MainView extends AView
         if ( e.key === 'Enter' ) this.onSearchClick();
 	}
 
-    // 탭 메뉴 선택 시 
+    // 로고 클릭 시 
+	onLogoClick(comp, info, e)
+	{
+        this.selectTab('home');
+	}
+
+    // 탭 메뉴 클릭 시 
 	onTabClick(comp, info, e)
 	{
-        const thisObj = this;
-        const tabId = comp.compId;
-        thisObj.tab.selectTabById(tabId);   
+        this.selectTab(comp.compId);        
+	}
 
+    // 탭 선택 시 초기화 로직
+    selectTab(tabId)
+    {
+        const thisObj = this;
+        thisObj.tab.selectTabById(tabId);   
+        
         // 선택된 탭(라벨) 색상 변경
         thisObj.home.element.style.color = (tabId === 'home')? 'blue' : 'black';
         thisObj.my.element.style.color = (tabId === 'my')? 'blue' : 'black';
@@ -68,8 +82,7 @@ MainView = class MainView extends AView
         thisObj.data.searchText = '';
 
         if (tabId == 'home') thisObj.getItemInfo();
-        
-	}
+    }
 
     // API 통신 로직
     getItemInfo(searchType='', searchText=''){
@@ -127,5 +140,6 @@ MainView = class MainView extends AView
             thisObj.label.element.style.display = 'block';
         } else thisObj.label.element.style.display = 'none'; // 조회 데이터 있을 경우 라벨 없애고 그리드에 데이터 추가
     }
+
 }
 
