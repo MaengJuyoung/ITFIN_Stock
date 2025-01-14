@@ -158,5 +158,25 @@ tab1 = class tab1 extends AView
             }
         });
     }
+
+    // 관심종목 더보기 클릭 시 
+	onMoreBtnClick(comp, info, e)
+	{
+        const status = e.target.innerText;
+        if (status === '더보기') {
+            this.group1.element.style.display = 'block';
+            this.moreBtn.setText("닫기");
+        }else {
+            this.group1.element.style.display = 'none';
+            this.moreBtn.setText("더보기");
+        }
+
+        /* 줄인 코드, 관심 종목 많아지면 보여질 뷰가 많아서 나중에 고려 
+        const isMore = e.target.innerText === '더보기';
+        this.group1.element.style.display = isMore ? 'block' : 'none';
+        this.moreBtn.setText(isMore ? '닫기' : '더보기');
+        */
+
+	}
 }
 

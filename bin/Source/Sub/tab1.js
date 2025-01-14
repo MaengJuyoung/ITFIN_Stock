@@ -79,17 +79,12 @@ tab1 = class tab1 extends AView
     getItemInfo(beginBasDt='', numOfRows='', pageNo='1'){
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
-
-        console.log("thisObj.getContainerView().data===",thisObj.getContainerView().data)
         const searchType = thisObj.getContainerView().data.searchType;      // 메인에서 넘어온 검색 구분
         const searchText = thisObj.getContainerView().data.searchText;      // 메인에서 넘어온 검색어
-        const formatBeginBasDt = thisObj.formatBasDate(beginBasDt);
-        console.log("날짜 포맷 후 : ",formatBeginBasDt);
-
+        const formatBeginBasDt = thisObj.formatBasDate(beginBasDt);         // 날짜 포맷
 
         let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=${numOfRows}&pageNo=${pageNo}&resultType=json&beginBasDt=${formatBeginBasDt}`;
         url += (searchType === '종목명') ? `&likeItmsNm=${searchText}` : `&likeSrtnCd=${searchText}`;
-        console.log("url====", url)
 
         $.ajax({
             type: 'GET',
@@ -163,5 +158,13 @@ tab1 = class tab1 extends AView
             }
         });
     }
+
+    // 관심종목 더보기 클릭 시 
+	onMoreBtnClick(comp, info, e)
+	{
+        const isMore = e.target.innerText === '더보기';
+        this.group1.element.style.display = isMore ? 'block' : 'none';
+        this.moreBtn.setText(isMore ? '닫기' : '더보기');
+	}
 }
 
