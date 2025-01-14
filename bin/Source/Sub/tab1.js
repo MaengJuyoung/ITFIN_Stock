@@ -97,6 +97,11 @@ tab1 = class tab1 extends AView
                 if (searchData.length < numOfRows || result.response.body.totalCount == numOfRows) {
                     thisObj.contiKey.element.style.display = 'none';   // 불러올 데이터가 없으면 다음 버튼 숨기기
                     //thisObj.getContainer().view.scrollToBottom();
+                    // 탭에서 메인으로 스크롤 요청 이벤트 전송
+                    const scrollEvent = new CustomEvent('scrollToBottom', {
+                        detail: { tab: 'home' }
+                    });
+                    window.dispatchEvent(scrollEvent);
                 }
             },
             error: function(error){
@@ -162,9 +167,21 @@ tab1 = class tab1 extends AView
     // 관심종목 더보기 클릭 시 
 	onMoreBtnClick(comp, info, e)
 	{
+        const status = e.target.innerText;
+        if (status === '더보기') {
+            this.group1.element.style.display = 'block';
+            this.moreBtn.setText("닫기");
+        }else {
+            this.group1.element.style.display = 'none';
+            this.moreBtn.setText("더보기");
+        }
+
+        /* 줄인 코드, 관심 종목 많아지면 보여질 뷰가 많아서 나중에 고려 
         const isMore = e.target.innerText === '더보기';
         this.group1.element.style.display = isMore ? 'block' : 'none';
         this.moreBtn.setText(isMore ? '닫기' : '더보기');
+        */
+
 	}
 }
 

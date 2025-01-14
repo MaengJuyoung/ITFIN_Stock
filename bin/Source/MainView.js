@@ -18,11 +18,21 @@ MainView = class MainView extends AView
         this.getItemInfo();
         this.home.element.style.color = 'blue';
         this.label.element.style.display = 'none';
+
+
+        
 	}
 
 	onInitDone()
 	{
 		super.onInitDone()
+        // 메인에서 이벤트를 수신하여 스크롤 처리
+        window.addEventListener('scrollToBottom', (event) => {
+            window.scrollTo({   
+                top: 600,
+                behavior: 'smooth'
+            });
+        });
 	}
 
 	onActiveDone(isFirst)
@@ -140,6 +150,5 @@ MainView = class MainView extends AView
             thisObj.label.element.style.display = 'block';
         } else thisObj.label.element.style.display = 'none'; // 조회 데이터 있을 경우 라벨 없애고 그리드에 데이터 추가
     }
-
 }
 

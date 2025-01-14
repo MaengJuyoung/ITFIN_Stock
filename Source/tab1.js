@@ -97,6 +97,11 @@ tab1 = class tab1 extends AView
                 if (searchData.length < numOfRows || result.response.body.totalCount == numOfRows) {
                     thisObj.contiKey.element.style.display = 'none';   // 불러올 데이터가 없으면 다음 버튼 숨기기
                     //thisObj.getContainer().view.scrollToBottom();
+                    // 탭에서 메인으로 스크롤 요청 이벤트 전송
+                    const scrollEvent = new CustomEvent('scrollToBottom', {
+                        detail: { tab: 'home' }
+                    });
+                    window.dispatchEvent(scrollEvent);
                 }
             },
             error: function(error){
