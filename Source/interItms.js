@@ -59,7 +59,7 @@ interItms = class interItms extends AView
         // 업데이트된 데이터를 다시 저장
         localStorage.setItem("myStock", JSON.stringify(myStock));
         alert("관심 종목에 추가되었습니다!");
-        this.getContainer().close();
+        this.getContainer().close(1);
     }
 }
 

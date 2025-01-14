@@ -19,11 +19,14 @@ tab1 = class tab1 extends AView
 	onInitDone()
 	{
 		super.onInitDone()
+        this.renderStockItems();
 	}
 
 	onActiveDone(isFirst)
 	{
-		super.onActiveDone(isFirst)
+		super.onActiveDone(isFirst);
+        this.renderStockItems();
+
 	}
 
     // 조회 날짜, 조회 개수 변경 시 
@@ -159,7 +162,7 @@ tab1 = class tab1 extends AView
         wnd.setData(data);
         wnd.setResultCallback(result => {
             if (result) {
-                console.log("result=",result)
+                this.renderStockItems();
             }
         });
     }
@@ -183,5 +186,50 @@ tab1 = class tab1 extends AView
         */
 
 	}
+
+    // 관심 종목 뷰를 추가하고 라벨에 종목 이름 표시
+    renderStockItems() {
+    // localStorage에서 myStock 가져오기
+    const myStock = JSON.parse(localStorage.getItem('myStock'));
+
+    // 그룹의 뷰 가져오기
+    const groups = this.group.$ele[0].childNodes;
+
+    const interItms = [];
+    myStock.forEach
+
+    // 관심 종목 데이터를 반복하며 그룹 내부의 라벨을 업데이트
+    myStock.forEach((groupData, groupIndex) => {
+        console.log("groupData",groupData);
+        console.log("groupIndex",groupIndex);
+
+        if (groups[groupIndex]) {
+            // 그룹 내부의 기존 라벨 제거
+            const groupElement = groups[groupIndex];
+            while (groupElement.firstChild) {
+                groupElement.removeChild(groupElement.firstChild);
+            }
+
+            // 그룹에 새로운 라벨 추가
+            groupData.interItms.forEach(itemName => {
+                const label = document.createElement('label');
+                label.className = 'ALabel-Style';
+                label.style.cssText = `
+                    width: 100%; 
+                    height: auto; 
+                    position: relative; 
+                    left: 0; 
+                    top: 0; 
+                    font-weight: normal; 
+                    display: block;
+                `;
+                label.textContent = itemName; // 종목 이름 설정
+                groupElement.appendChild(label);
+            });
+        }
+    });
+}
+
+
 }
 

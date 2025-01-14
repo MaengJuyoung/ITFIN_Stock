@@ -2,11 +2,21 @@
     ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 980px; height: auto; position: relative; background-color: rgba(0, 0, 0, 0); margin-bottom: 20px; overflow: hidden;" id="tab1--myItmsNm"
         ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 100%; height: 30px; position: relative; font-size: 15px; font-weight: bold;">MY STOCK</label
         ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 60px; position: relative; background-color: rgba(0, 0, 0, 0); color: rgb(0, 0, 0); border-width: 1px; overflow: visible; border-color: rgb(217, 217, 217); left: 0px; border-style: solid;" id="tab1--group" data-group=""
-            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 195px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right: 1px solid rgb(217, 217, 217); float: left;"></div
-            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 196px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right: 1px solid rgb(217, 217, 217); float: left;"></div
-            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 196px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right: 1px solid rgb(217, 217, 217); float: left;"></div
-            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 196px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right: 1px solid rgb(217, 217, 217); float: left;"></div
-            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 195px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); float: left;"></div
+            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 195px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right: 1px solid rgb(217, 217, 217); float: left; padding: 20px 10px; font-size: 15px; font-weight: normal; font-family: &quot;맑은 고딕&quot;;"
+                ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 100%; height: 100%; position: relative; left: 0px; top: 0px; font-weight: normal;">Label</label
+            ></div
+            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 196px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right: 1px solid rgb(217, 217, 217); float: left; padding: 20px 10px; font-size: 15px; font-weight: normal; font-family: &quot;맑은 고딕&quot;;"
+                ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 100%; height: 100%; position: relative; left: 0px; top: 0px; font-weight: normal;">Label</label
+            ></div
+            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 196px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right: 1px solid rgb(217, 217, 217); float: left; padding: 20px 10px; font-size: 15px; font-weight: normal; font-family: &quot;맑은 고딕&quot;;"
+                ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 100%; height: 100%; position: relative; left: 0px; top: 0px; font-weight: normal;">Label</label
+            ></div
+            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 196px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right: 1px solid rgb(217, 217, 217); float: left; padding: 20px 10px; font-size: 15px; font-weight: normal; font-family: &quot;맑은 고딕&quot;;"
+                ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 100%; height: 100%; position: relative; left: 0px; top: 0px; font-weight: normal;">Label</label
+            ></div
+            ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 195px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right: 1px solid rgb(217, 217, 217); float: left; padding: 20px 10px; font-size: 15px; font-weight: normal; font-family: &quot;맑은 고딕&quot;;"
+                ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 100%; height: 100%; position: relative; left: 0px; top: 0px; font-weight: normal;">Label</label
+            ></div
         ></div
         ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 60px; position: relative; background-color: rgba(0, 0, 0, 0); color: rgb(0, 0, 0); border-right: 1px solid rgb(217, 217, 217); border-bottom: 1px solid rgb(217, 217, 217); border-left: 1px solid rgb(217, 217, 217); overflow: visible; left: 0px; border-top-color: rgba(0, 0, 0, 0); display: none;" id="tab1--group1"
             ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 195px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); border-right: 1px solid rgb(217, 217, 217); float: left;"></div

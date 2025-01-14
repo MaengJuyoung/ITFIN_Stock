@@ -5,8 +5,6 @@ interItms = class interItms extends AView
 	{
 		super()
         this.data = null; 
-		//TODO:edit here
-
 	}
 
 	init(context, evtListener)
@@ -17,8 +15,6 @@ interItms = class interItms extends AView
         myStock.forEach(interGrps => {
             this.interGrp.addItem(interGrps.interGrp);
         })
-		//TODO:edit here
-
 	}
 
 	onInitDone()
@@ -29,15 +25,11 @@ interItms = class interItms extends AView
         this.itmsNm.setText(this.data.itmsNm);
         this.mrktCtg.setText(this.data.mrktCtg);
         this.srtnCd.setText(this.data.srtnCd);
-		//TODO:edit here
-
 	}
 
 	onActiveDone(isFirst)
 	{
 		super.onActiveDone(isFirst)
-
-		//TODO:edit here
 
 	}
 
@@ -67,8 +59,7 @@ interItms = class interItms extends AView
         // 업데이트된 데이터를 다시 저장
         localStorage.setItem("myStock", JSON.stringify(myStock));
         alert("관심 종목에 추가되었습니다!");
-        this.getContainer().close();
+        this.getContainer().close(1);
     }
-
 }
 
