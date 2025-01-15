@@ -20,7 +20,7 @@ tab1 = class tab1 extends AView
 	onInitDone()
 	{
 		super.onInitDone()
-        this.renderStockItems();
+        this.renderAllStockItems();
 	}
 
 	onActiveDone(isFirst)
@@ -28,7 +28,7 @@ tab1 = class tab1 extends AView
 		super.onActiveDone(isFirst);
         // 탭 활성화 시 관심 종목 데이터 로드 및 렌더링
         this.getMyStock();
-        this.renderStockItems();
+        this.renderAllStockItems();
 
 	}
 
@@ -98,13 +98,11 @@ tab1 = class tab1 extends AView
             success: function(result){
                 console.log("result.response.body",result.response.body)
                 const searchData = result.response.body.items.item;
-                thisObj.updateLabel(result.response.body.totalCount);   // 검색결과에 따라 라벨 처리하는 함수 호출
+                thisObj.updateLabel(result.response.body.totalCount);       // 검색결과에 따라 라벨 처리하는 함수 호출
                 thisObj.addDataAtGrid(searchData);
                 if (searchData.length < numOfRows || result.response.body.totalCount == numOfRows) {
-                    thisObj.contiKey.element.style.display = 'none';   // 불러올 데이터가 없으면 다음 버튼 숨기기
-                    //thisObj.getContainer().view.scrollToBottom();
-                    // 탭에서 메인으로 스크롤 요청 이벤트 전송
-                    const scrollEvent = new CustomEvent('scrollToBottom', {
+                    thisObj.contiKey.element.style.display = 'none';        // 불러올 데이터가 없으면 다음 버튼 숨기기
+                    const scrollEvent = new CustomEvent('scrollToBottom', { // 탭에서 메인으로 스크롤 요청 이벤트 전송
                         detail: { tab: 'home' }
                     });
                     window.dispatchEvent(scrollEvent);
@@ -166,7 +164,7 @@ tab1 = class tab1 extends AView
         wnd.setResultCallback(result => {
             if (result) {
                 this.getMyStock();
-                this.renderStockItems();
+                this.renderAllStockItems();
             }
         });
     }
@@ -174,21 +172,13 @@ tab1 = class tab1 extends AView
     // 관심종목 더보기 클릭 시 
 	onMoreBtnClick(comp, info, e)
 	{
-        const status = e.target.innerText;
-        if (status === '더보기') {
-            this.group1.element.style.display = 'block';
-            this.moreBtn.setText("닫기");
-        }else {
-            this.group1.element.style.display = 'none';
-            this.moreBtn.setText("더보기");
-        }
-
-        /* 줄인 코드, 관심 종목 많아지면 보여질 뷰가 많아서 나중에 고려 
         const isMore = e.target.innerText === '더보기';
+
+        // '더보기'와 '닫기' 상태 전환
         this.group1.element.style.display = isMore ? 'block' : 'none';
         this.moreBtn.setText(isMore ? '닫기' : '더보기');
-        */
 
+        this.renderAllStockItems();
 	}    
 
     // localStorage에 있는 관심 종목들만 배열에 저장하는 로직
@@ -203,29 +193,22 @@ tab1 = class tab1 extends AView
     }
 
     // 라벨에 관심 종목 이름 표시하는 로직
-    renderStockItems() {
-        // localStorage에서 myStock 가져오기
-        const myStock = JSON.parse(localStorage.getItem('myStock'));
-
+    renderAllStockItems() {
         // 그룹의 뷰 가져오기
-        const groups = this.group.$ele[0].childNodes;
-        // console.log("groups",groups);
+        const mainGroups = this.group.$ele[0].childNodes;
+        const additionalGroups = this.group1.$ele[0].childNodes;
 
         // '더보기' 버튼 처리
-        if (this.interItms.length < 6){
-            this.moreBtn.element.style.display = 'none';
-        } else {
-            this.moreBtn.element.style.display = 'block';
-        }
+        this.moreBtn.element.style.display = this.interItms.length > 5 ? 'block' : 'none';
 
-        // 그룹에 관심 종목 라벨 추가
+        // 관심종목 렌더링
         this.interItms.forEach((data, index) => {
-            if (index >= 5) return;
-            const groupElement = groups[index];
+            const targetGroup = index < 5 ? mainGroups[index] : additionalGroups[index - 5];
+            if (!targetGroup) return;
 
             // 기존 라벨 제거
-            while (groupElement.firstChild) {
-                groupElement.removeChild(groupElement.firstChild);
+            while (targetGroup.firstChild) {
+                targetGroup.removeChild(targetGroup.firstChild);
             }
 
             // 새 라벨 생성 및 추가
@@ -241,7 +224,7 @@ tab1 = class tab1 extends AView
                 display: block;
             `;
             label.textContent = data; // 종목 이름 설정
-            groupElement.appendChild(label);
+            targetGroup.appendChild(label);
         });
     }
 }

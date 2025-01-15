@@ -74,6 +74,12 @@ interItms = class interItms extends AView
         }
 	}
 
+    // 그룹 이름 입력 후 엔터 클릭 시 
+    onGroupTextFieldKeyup(comp, info, e)
+	{
+        if ( e.key === 'Enter' ) this.onGroupAddBtnClick();
+	}
+
     // 그룹 추가 '확인' 버튼 클릭 시 
     onGroupAddBtnClick(comp, info, e) { 
         const thisObj = this;
@@ -116,7 +122,6 @@ interItms = class interItms extends AView
 
     // 토스트 보여주는 로직
     showToast(message){
-        AToast.single();
         AToast.show(`${message}`);
     }
 }

@@ -132,7 +132,6 @@ MainView = class MainView extends AView
         const thisObj = this;
         const tab = thisObj.tab.getSelectedTab().view;
         this.addDataAtGrid(tab);
-        this.addMyStockData(tab);
     }
 
     // 그리드에 데이터 추가 로직
@@ -154,10 +153,6 @@ MainView = class MainView extends AView
                 item.itmsNm, item.mrktCtg, item.isinCd, item.corpNm, item.crno, item.srtnCd,
             ]);
         });
-    }
-
-    addMyStockData(tab){
-
     }
 
     // 라벨 업데이트 로직
