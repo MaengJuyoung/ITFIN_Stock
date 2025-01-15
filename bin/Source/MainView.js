@@ -100,7 +100,6 @@ MainView = class MainView extends AView
 
         if (tabId == 'home') {
             thisObj.getItemInfo();
-            console.log("container", this.getContainerView());
         }
     }
 

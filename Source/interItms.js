@@ -64,7 +64,6 @@ interItms = class interItms extends AView
 	onAddGroupBtnClick(comp, info, e)
 	{
         const buttonName = e.target.innerText;  // 버튼 이름 가져오기
-        console.log("buttonName",buttonName)
 
         if (buttonName === '그룹 추가') {       // 그룹 추가 로직
             this.addGroupView.element.style.display = 'block';
