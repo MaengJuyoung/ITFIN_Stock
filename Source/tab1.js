@@ -81,6 +81,18 @@ tab1 = class tab1 extends AView
         this.openDialog(interdata);
 	}
 
+    // 관심종목 더보기 클릭 시 
+	onMoreBtnClick(comp, info, e)
+	{
+        const isMore = e.target.innerText === '더보기';
+
+        // '더보기'와 '닫기' 상태 전환
+        this.group1.element.style.display = isMore ? 'block' : 'none';
+        this.moreBtn.setText(isMore ? '닫기' : '더보기');
+
+        this.renderAllStockItems();
+	}    
+
     // API 통신 로직
     getItemInfo(beginBasDt='', numOfRows='', pageNo='1'){
         const thisObj = this;
@@ -168,18 +180,6 @@ tab1 = class tab1 extends AView
             }
         });
     }
-
-    // 관심종목 더보기 클릭 시 
-	onMoreBtnClick(comp, info, e)
-	{
-        const isMore = e.target.innerText === '더보기';
-
-        // '더보기'와 '닫기' 상태 전환
-        this.group1.element.style.display = isMore ? 'block' : 'none';
-        this.moreBtn.setText(isMore ? '닫기' : '더보기');
-
-        this.renderAllStockItems();
-	}    
 
     // localStorage에 있는 관심 종목들만 배열에 저장하는 로직
     getMyStock(){
