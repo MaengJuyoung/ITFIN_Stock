@@ -11,6 +11,7 @@ tab1 = class tab1 extends AView
 		super.init(context, evtListener)
 
         this.data = this.getContainerView().data;
+        this.interItms = [];
         this.pageNo = 1;
         this.numOfRows.selectItemByValue(100);
         this.label.element.style.display = 'none';
@@ -25,6 +26,8 @@ tab1 = class tab1 extends AView
 	onActiveDone(isFirst)
 	{
 		super.onActiveDone(isFirst);
+        // 탭 활성화 시 관심 종목 데이터 로드 및 렌더링
+        this.getMyStock();
         this.renderStockItems();
 
 	}
@@ -163,6 +166,7 @@ tab1 = class tab1 extends AView
         wnd.setResultCallback(result => {
             if (result) {
                 this.getMyStock();
+                this.renderStockItems();
             }
         });
     }
@@ -185,37 +189,60 @@ tab1 = class tab1 extends AView
         this.moreBtn.setText(isMore ? '닫기' : '더보기');
         */
 
-	}
+	}    
 
-    // 관심 종목 뷰를 추가하고 라벨에 종목 이름 표시
+    // localStorage에 있는 관심 종목들만 배열에 저장하는 로직
+    getMyStock(){
+        const myStock = JSON.parse(localStorage.getItem('myStock'));
+        myStock.forEach((gruopData) => {
+            gruopData.interItms.forEach(itemName => {
+                if (!this.interItms.includes(itemName)) this.interItms.push(itemName);
+            });
+        })
+        
+    }
+
+    // 라벨에 관심 종목 이름 표시하는 로직
     renderStockItems() {
         // localStorage에서 myStock 가져오기
         const myStock = JSON.parse(localStorage.getItem('myStock'));
 
         // 그룹의 뷰 가져오기
         const groups = this.group.$ele[0].childNodes;
+        // console.log("groups",groups);
 
-        const interItms = [];
-        // 관심 종목 데이터를 반복하며 배열에 추가
-        myStock.forEach((gruopData) => {
-            gruopData.interItms.forEach(itemName => {
-                interItms.push(itemName);
-            });
-        })
+        // '더보기' 버튼 처리
+        if (this.interItms.length < 6){
+            this.moreBtn.element.style.display = 'none';
+        } else {
+            this.moreBtn.element.style.display = 'block';
+        }
+
+        // 그룹에 관심 종목 라벨 추가
+        this.interItms.forEach((data, index) => {
+            if (index >= 5) return;
+            const groupElement = groups[index];
+
+            // 기존 라벨 제거
+            while (groupElement.firstChild) {
+                groupElement.removeChild(groupElement.firstChild);
+            }
+
+            // 새 라벨 생성 및 추가
+            const label = document.createElement('label');
+            label.className = 'ALabel-Style';
+            label.style.cssText = `
+                width: 100%; 
+                height: auto; 
+                position: relative; 
+                left: 0; 
+                top: 0; 
+                font-weight: normal; 
+                display: block;
+            `;
+            label.textContent = data; // 종목 이름 설정
+            groupElement.appendChild(label);
+        });
     }
-
-    // localStorage에 있는 관심 종목들만 배열에 저장하는 로직
-    getMyStock(){
-        const myStock = JSON.parse(localStorage.getItem('myStock'));
-        const interItms = [];
-        myStock.forEach((gruopData) => {
-            gruopData.interItms.forEach(itemName => {
-                if (!interItms.includes(itemName)) interItms.push(itemName);
-            });
-        })
-        console.log("interItms=",interItms);
-    }
-
-    
 }
 

@@ -20,10 +20,10 @@ MainView = class MainView extends AView
         this.label.element.style.display = 'none';
 
         const myStock = [
-        {
-            interGrp: "관심그룹 1",
-            interItms: [] // 관심 종목
-        }
+            {
+                interGrp: "관심그룹 1",
+                interItms: [] // 관심 종목
+            }
         ];
         localStorage.setItem('myStock', JSON.stringify(myStock));
         
@@ -98,7 +98,10 @@ MainView = class MainView extends AView
         thisObj.data.searchType = '';
         thisObj.data.searchText = '';
 
-        if (tabId == 'home') thisObj.getItemInfo();
+        if (tabId == 'home') {
+            thisObj.getItemInfo();
+            console.log("container", this.getContainerView());
+        }
     }
 
     // API 통신 로직
@@ -116,7 +119,7 @@ MainView = class MainView extends AView
             success: function(result){
                 thisObj.updateLabel(result.response.body.totalCount);   // 검색결과에 따라 라벨 처리하는 함수 호출
                 thisObj.data.items = result.response.body.items.item;   // result 결과 전역 변수에 저장
-                thisObj.addDataAtGrid();                                // 그리드에 데이터 추가하는 함수 호출
+                thisObj.getTabData();                                // 그리드에 데이터 추가하는 함수 호출
             },
             error: function(error){
                 console.error(error);
@@ -124,20 +127,24 @@ MainView = class MainView extends AView
         })
     }
 
-    // 그리드에 데이터 추가 로직
-    addDataAtGrid(){
+    // home 탭 뷰 데이터 가져오는 로직
+    getTabData(){
         const thisObj = this;
-        const tab = thisObj.tab.getSelectedTab();
+        const tab = thisObj.tab.getSelectedTab().view;
+        this.addDataAtGrid(tab);
+        this.addMyStockData(tab);
+    }
 
-        // home에서 그리드 로드 시, 기본값 설정
-        const homeTab = tab.view;
-        homeTab.beginBasDt.selectBtnByValue(0);
-        homeTab.numOfRows.selectItemByValue(100);
-        homeTab.contiKey.element.style.display = 'block';
-        homeTab.label.element.style.display = 'none';
+    // 그리드에 데이터 추가 로직
+    addDataAtGrid(tab){
+        // 기본값 설정
+        tab.beginBasDt.selectBtnByValue(0);
+        tab.numOfRows.selectItemByValue(100);
+        tab.contiKey.element.style.display = 'block';
+        tab.label.element.style.display = 'none';
         
         // 그리드 초기화 
-        const grid = tab.view.grid;
+        const grid = tab.grid;
         grid.removeAll();         
 
         // 데이터 추가
@@ -147,6 +154,10 @@ MainView = class MainView extends AView
                 item.itmsNm, item.mrktCtg, item.isinCd, item.corpNm, item.crno, item.srtnCd,
             ]);
         });
+    }
+
+    addMyStockData(tab){
+
     }
 
     // 라벨 업데이트 로직
