@@ -185,11 +185,10 @@ tab1 = class tab1 extends AView
     getMyStock(){
         const myStock = JSON.parse(localStorage.getItem('myStock'));
         myStock.forEach((gruopData) => {
-            gruopData.interItms.forEach(itemName => {
-                if (!this.interItms.includes(itemName)) this.interItms.push(itemName);
+            (gruopData.interItms).forEach(item => {
+                if (!this.interItms.includes(item.itmsNm)) this.interItms.push(item.itmsNm);
             });
         })
-        
     }
 
     // 라벨에 관심 종목 이름 표시하는 로직

@@ -48,6 +48,7 @@ tab2 = class tab2 extends AView
             data : myStock[index]
         };      // 선택된 그룹 데이터 : 관심 종목 데이터에 보여주기 위해 전역 변수에 저장
         this.itmsView.element.style.display = 'block';
+        this.loadItmsGrid();
 	}
 
     // 관심 그룹 '추가' 버튼 클릭 시 
@@ -159,7 +160,15 @@ tab2 = class tab2 extends AView
         AToast.show(`${message}`);
     }
 
-	
+	// 관심 종목 그리드에 보여주는 로직
+    loadItmsGrid(){
+        this.itmsGrid.removeAll();
+        console.log("this.selectedGrp",this.selectedGrp)
+        const data = this.selectedGrp.data.interItms;
+        data.forEach(item =>{
+            this.itmsGrid.addRow([item.srtnCd, item.itmsNm, item.mrktCtg])
+        })
+    }
 
 
     // 드롭박스에 모든 종목명 추가하는 로직

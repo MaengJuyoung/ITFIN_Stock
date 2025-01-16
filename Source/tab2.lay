@@ -2,9 +2,9 @@
     ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 400px; height: 100%; position: relative; background-color: rgba(0, 0, 0, 0); float: left; padding: 20px;" id="tab2--grp"
         ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 100%; height: 30px; position: relative; font-size: 20px; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid rgb(217, 217, 217);">관심 그룹</label
         ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 30px; position: relative; background-color: rgba(0, 0, 0, 0); margin-bottom: 10px;"
-            ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 60px; height: 30px; position: relative; background-color: rgb(0, 0, 255); color: rgb(255, 255, 255); font-size: 15px; border-radius: 5px; float: left; margin-right: 10px; border-width: 1px; border-style: solid; border-color: rgb(217, 217, 217);" id="tab2--addGrp" data-listener-click="tab2:onAddGrpClick">추가</button
-            ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 60px; height: 30px; position: relative; background-color: rgb(255, 0, 0); color: rgb(255, 255, 255); font-size: 15px; border-radius: 5px; float: left; margin-right: 10px; border-width: 1px; border-style: solid; border-color: rgb(217, 217, 217);" id="tab2--deleteGrp" data-listener-click="tab2:onDeleteGrpClick">삭제</button
-            ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 100px; height: 30px; position: relative; background-color: rgb(11, 179, 44); color: rgb(255, 255, 255); font-size: 15px; border-radius: 5px; float: left; margin-left: 0px; margin-top: 0px; border-width: 1px; border-style: solid; border-color: rgb(217, 217, 217);" id="tab2--modifyGrp" data-listener-click="tab2:onModifyGrpClick">이름 변경</button
+            ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 60px; height: 30px; position: relative; background-color: rgba(0, 0, 0, 0); color: rgb(0, 0, 0); font-size: 15px; border-radius: 5px; float: left; margin-right: 10px; border-width: 1px; border-style: solid; border-color: rgb(217, 217, 217); font-weight: bold;" id="tab2--addGrp" data-listener-click="tab2:onAddGrpClick">추가</button
+            ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 60px; height: 30px; position: relative; background-color: rgb(237, 237, 237); color: rgb(0, 0, 0); font-size: 15px; border-radius: 5px; float: left; margin-right: 10px; border-width: 1px; border-style: solid; border-color: rgb(217, 217, 217); font-weight: bold;" id="tab2--deleteGrp" data-listener-click="tab2:onDeleteGrpClick">삭제</button
+            ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 100px; height: 30px; position: relative; background-color: rgba(0, 0, 0, 0); color: rgb(0, 0, 0); font-size: 15px; border-radius: 5px; float: left; margin-left: 0px; margin-top: 0px; border-width: 1px; border-style: solid; border-color: rgb(217, 217, 217); font-weight: bold;" id="tab2--modifyGrp" data-listener-click="tab2:onModifyGrpClick">이름 변경</button
         ></div
         ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 30px; position: relative; background-color: rgba(0, 0, 0, 0); margin-bottom: 10px; font-size: 15px; display: none;" id="tab2--grpName"
             ><input data-base="ATextField" data-class="ATextField" type="text" value="" class="ATextField-Style" autocomplete="off" style="width: 250px; height: 30px; position: relative; left: 0px; margin-right: 5px;" id="tab2--groupTextField" data-listener-keyup="tab2:onGroupTextFieldKeyup"
@@ -69,12 +69,12 @@
                 ></div
             ></div
             ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 500px; position: relative; left: 0px; background-color: rgba(0, 0, 0, 0);"
-                ><div data-base="AGrid" data-class="AGrid" data-selectable="true" data-clear-rowtmpl="true" data-ver="3301" class="AGrid-Style" data-hide-footer="true" style="width: 100%; height: 100%; position: relative; left: 0px; top: 0px; visibility: visible;" id="tab2--grid" data-single-select="1" data-fullrow-select="true"
+                ><div data-base="AGrid" data-class="AGrid" data-selectable="true" data-clear-rowtmpl="true" data-ver="3301" class="AGrid-Style" data-hide-footer="true" style="width: 100%; height: 100%; position: relative; left: 0px; top: 0px; visibility: visible;" id="tab2--itmsGrid" data-fullrow-select="true"
                     ><div class="grid-scroll-area" style=""
                         ><table class="grid-header-table" align="center"
                             ><colgroup
-                                ><col width="120"
-                                ><col width="180"
+                                ><col width="100"
+                                ><col width="200"
                                 ><col width="70"
                             ></colgroup
                             ><thead align="center" class="head-prop" style=""
@@ -87,8 +87,8 @@
                         ></table
                         ><table class="grid-body-table" align="center"
                             ><colgroup
-                                ><col width="120"
-                                ><col width="180"
+                                ><col width="100"
+                                ><col width="200"
                                 ><col width="70"
                             ></colgroup
                             ><thead align="center" class="head-prop"
@@ -99,7 +99,7 @@
                                 ></tr
                             ></thead
                             ><tbody align="center" class="body-prop"
-                                ><tr height="22px"
+                                ><tr height="30"
                                     ><td class="" style="border-color: rgb(150, 180, 255) rgb(255, 255, 255); border-style: solid; border-width: 1px; font-size: 13px;"></td
                                     ><td class="" style="border-color: rgb(150, 180, 255) rgb(255, 255, 255); border-style: solid; border-width: 1px; font-size: 13px;">1,2</td
                                     ><td class="" style="border-color: rgb(150, 180, 255) rgb(255, 255, 255); border-style: solid; border-width: 1px; font-size: 13px;">1,3</td
@@ -108,8 +108,8 @@
                         ></table
                         ><table class="grid-footer-table" align="center"
                             ><colgroup
-                                ><col width="120"
-                                ><col width="180"
+                                ><col width="100"
+                                ><col width="200"
                                 ><col width="70"
                             ></colgroup
                             ><thead align="center" class="head-prop"
@@ -120,7 +120,7 @@
                                 ></tr
                             ></thead
                             ><tfoot align="center" class="foot-prop" style="display: none;"
-                                ><tr height="22px"
+                                ><tr height="22"
                                     ><td style="border-top: 1px solid rgb(150, 180, 255);">col1</td
                                     ><td style="border-top: 1px solid rgb(150, 180, 255);">col2</td
                                     ><td style="border-top: 1px solid rgb(150, 180, 255);">col3</td

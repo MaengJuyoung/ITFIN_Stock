@@ -52,7 +52,7 @@ interItms = class interItms extends AView
             return thisObj.showToast("이미 관심 종목에 추가되어 있습니다.");
         }
 
-        group.push(this.data.itmsNm);
+        group.push({srtnCd : this.data.srtnCd, itmsNm :this.data.itmsNm, mrktCtg :this.data.mrktCtg });
 
         // 업데이트된 데이터를 다시 저장
         localStorage.setItem("myStock", JSON.stringify(myStock));
