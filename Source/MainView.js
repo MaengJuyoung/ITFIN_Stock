@@ -21,13 +21,6 @@ MainView = class MainView extends AView
         this.home.element.style.color = 'blue';
         this.label.element.style.display = 'none';
 
-        const myStock = [
-            {
-                interGrp: "관심그룹 1",
-                interItms: [] // 관심 종목
-            }
-        ];
-        // localStorage.setItem('myStock', JSON.stringify(myStock));
         
 	}
 
@@ -47,6 +40,20 @@ MainView = class MainView extends AView
 	onActiveDone(isFirst)
 	{
 		super.onActiveDone(isFirst)
+        
+        // localStorage에서 'myStock' 값을 가져오고, 없다면 기본값 설정
+        let myStock = JSON.parse(localStorage.getItem('myStock'));
+        if (!myStock.length) {
+            // 데이터가 없다면 기본값으로 설정
+            myStock = [
+                {
+                    interGrp: "관심그룹 1",
+                    interItms: [] // 관심 종목
+                }
+            ];
+            // 로컬스토리지에 기본값 저장
+            localStorage.setItem('myStock', JSON.stringify(myStock));
+        }
 	}
 
     // 검색 버튼 클릭 시 
