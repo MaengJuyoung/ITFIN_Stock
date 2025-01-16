@@ -8,12 +8,15 @@ tab2 = class tab2 extends AView
 
 	init(context, evtListener)
 	{
-		super.init(context, evtListener)
+		super.init(context, evtListener)      
+        this.allItms=[];  
 	}
 
 	onInitDone()
 	{
 		super.onInitDone()
+        this.dropBox.setReadOnly(false);
+        this.setDropBox();
 	}
 
 	onActiveDone(isFirst)
@@ -22,13 +25,16 @@ tab2 = class tab2 extends AView
 
         this.getInterGrp();
         this.grpGrid.clearSelected();
+
         this.selectedGrp = '';              // 전역 변수로 클릭한 관심 그룹 저장
         this.grpActionType = null;          // 전역 변수로 클릭한 버튼 상태 저장
         this.grpName.element.style.display = 'none'; 
 
+        
 	}
 
     /* -------------------------------------------------------- 이벤트 --------------------------------------------------------*/
+    /* ---------------------------------------------------- 관심 그룹 관련 ----------------------------------------------------*/
     // 관심 그룹 선택 시 
 	onGrpGridSelect(comp, info, e)
 	{
@@ -46,8 +52,8 @@ tab2 = class tab2 extends AView
     // 관심 그룹 '추가' 버튼 클릭 시 
 	onAddGrpClick(comp, info, e)
 	{
-        this.grpGrid.clearSelected(); // 기존 선택 해제
-        this.showGroupInputView('add'); // 그룹 추가 뷰 표시
+        this.grpGrid.clearSelected();       // 기존 선택 해제
+        this.showGroupInputView('add');     // 그룹 추가 뷰 표시
 	}
 
     // 관심 그룹 '삭제' 버튼 클릭 시 
@@ -60,9 +66,9 @@ tab2 = class tab2 extends AView
         if (myStock.length === 1) return this.showToast('관심 그룹은 최소 1개 이상 존재해야 합니다.');
         
         this.showToast("삭제 시 해당 그룹의 종목 정보도 함께 삭제됩니다!!!");
-        myStock.splice(this.selectedGrp.index, 1); // 선택된 그룹의 인덱스를 제거
-        localStorage.setItem("myStock", JSON.stringify(myStock)); // 로컬 스토리지에 저장
-        this.getInterGrp(); // 그리드 업데이트
+        myStock.splice(this.selectedGrp.index, 1);                  // 선택된 그룹의 인덱스를 제거
+        localStorage.setItem("myStock", JSON.stringify(myStock));   // 로컬 스토리지에 저장
+        this.getInterGrp();                                         // 그리드 업데이트
 	}
 
     // 관심 그룹 '이름 변경' 버튼 클릭 시 
@@ -124,6 +130,8 @@ tab2 = class tab2 extends AView
 	{
         this.grpName.element.style.display = 'none';
 	}
+    /* ---------------------------------------------------- 관심 종목 관련 ----------------------------------------------------*/
+
 
     /* -------------------------------------------------------- 로직 --------------------------------------------------------*/
     // localStorage에 있는 관심 그룹 가져오기 
@@ -152,6 +160,13 @@ tab2 = class tab2 extends AView
 
 	
 
-	
+
+    // 드롭박스에 모든 종목명 추가하는 로직
+    setDropBox(){
+        const data = this.getContainerView().allItms;
+        data.forEach(item => this.dropBox.addItem(`${item.itmsNm}`,`${item.itmsNm}`))
+    }
+
+    
 }
 

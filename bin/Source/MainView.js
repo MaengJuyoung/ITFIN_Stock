@@ -14,8 +14,10 @@ MainView = class MainView extends AView
             searchType : '',
             searchText : '',
         };
+        this.allItms = [];
         this.contiKey = '';
         this.getItemInfo();
+        this.getallItms();
         this.home.element.style.color = 'blue';
         this.label.element.style.display = 'none';
 
@@ -118,7 +120,7 @@ MainView = class MainView extends AView
             success: function(result){
                 thisObj.updateLabel(result.response.body.totalCount);   // 검색결과에 따라 라벨 처리하는 함수 호출
                 thisObj.data.items = result.response.body.items.item;   // result 결과 전역 변수에 저장
-                thisObj.getTabData();                                // 그리드에 데이터 추가하는 함수 호출
+                thisObj.getTabData();                                   // 그리드에 데이터 추가하는 함수 호출
             },
             error: function(error){
                 console.error(error);
@@ -161,6 +163,26 @@ MainView = class MainView extends AView
             (thisObj.data.searchText === '특수문자')? thisObj.label.setText("특수문자는 입력할 수 없습니다.") : thisObj.label.setText("검색된 데이터가 없습니다.");
             thisObj.label.element.style.display = 'block';
         } else thisObj.label.element.style.display = 'none'; // 조회 데이터 있을 경우 라벨 없애고 그리드에 데이터 추가
+    }
+
+    // 모든 종목명 가져오는 로직
+    getallItms(){
+        const thisObj = this;
+
+        const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
+        const url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=2700&resultType=json`;
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            success: function(result){
+                thisObj.allItms = result.response.body.items.item;         
+                console.log("thisObj.allItms",thisObj.allItms);
+            },
+            error: function(error){
+                console.error(error);
+            }
+        })
     }
 }
 
