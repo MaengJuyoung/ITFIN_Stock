@@ -29,6 +29,7 @@ tab2 = class tab2 extends AView
         this.selectedGrp = '';              // 전역 변수로 클릭한 관심 그룹 저장
         this.grpActionType = null;          // 전역 변수로 클릭한 버튼 상태 저장
         this.grpName.element.style.display = 'none'; 
+        this.itmsView.element.style.display = 'none';
 
         
 	}
@@ -46,7 +47,7 @@ tab2 = class tab2 extends AView
             index : index,
             data : myStock[index]
         };      // 선택된 그룹 데이터 : 관심 종목 데이터에 보여주기 위해 전역 변수에 저장
-
+        this.itmsView.element.style.display = 'block';
 	}
 
     // 관심 그룹 '추가' 버튼 클릭 시 

@@ -29,6 +29,7 @@ tab2 = class tab2 extends AView
         this.selectedGrp = '';              // 전역 변수로 클릭한 관심 그룹 저장
         this.grpActionType = null;          // 전역 변수로 클릭한 버튼 상태 저장
         this.grpName.element.style.display = 'none'; 
+        this.itmsView.element.style.display = 'none';
 
         
 	}
@@ -46,14 +47,14 @@ tab2 = class tab2 extends AView
             index : index,
             data : myStock[index]
         };      // 선택된 그룹 데이터 : 관심 종목 데이터에 보여주기 위해 전역 변수에 저장
-
+        this.itmsView.element.style.display = 'block';
 	}
 
     // 관심 그룹 '추가' 버튼 클릭 시 
 	onAddGrpClick(comp, info, e)
 	{
-        this.grpGrid.clearSelected(); // 기존 선택 해제
-        this.showGroupInputView('add'); // 그룹 추가 뷰 표시
+        this.grpGrid.clearSelected();       // 기존 선택 해제
+        this.showGroupInputView('add');     // 그룹 추가 뷰 표시
 	}
 
     // 관심 그룹 '삭제' 버튼 클릭 시 
@@ -66,9 +67,9 @@ tab2 = class tab2 extends AView
         if (myStock.length === 1) return this.showToast('관심 그룹은 최소 1개 이상 존재해야 합니다.');
         
         this.showToast("삭제 시 해당 그룹의 종목 정보도 함께 삭제됩니다!!!");
-        myStock.splice(this.selectedGrp.index, 1); // 선택된 그룹의 인덱스를 제거
-        localStorage.setItem("myStock", JSON.stringify(myStock)); // 로컬 스토리지에 저장
-        this.getInterGrp(); // 그리드 업데이트
+        myStock.splice(this.selectedGrp.index, 1);                  // 선택된 그룹의 인덱스를 제거
+        localStorage.setItem("myStock", JSON.stringify(myStock));   // 로컬 스토리지에 저장
+        this.getInterGrp();                                         // 그리드 업데이트
 	}
 
     // 관심 그룹 '이름 변경' 버튼 클릭 시 

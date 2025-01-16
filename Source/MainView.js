@@ -27,7 +27,7 @@ MainView = class MainView extends AView
                 interItms: [] // 관심 종목
             }
         ];
-        localStorage.setItem('myStock', JSON.stringify(myStock));
+        // localStorage.setItem('myStock', JSON.stringify(myStock));
         
 	}
 
