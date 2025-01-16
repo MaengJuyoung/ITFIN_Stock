@@ -129,6 +129,8 @@ tab2 = class tab2 extends AView
         // 뷰 업데이트
         this.grpName.element.style.display = 'none';
         this.getInterGrp();
+        
+        if (actionType === 'modify') this.grpGrid.selectCell(this.grpGrid.getRow(this.selectedGrp.index));   // 선택 상태 유지
 	}
 
     // 관심 그룹 '취소' 버튼 클릭 시 
