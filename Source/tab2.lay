@@ -12,7 +12,7 @@
             ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 50px; height: 30px; position: relative; background-color: rgba(0, 0, 0, 0); background-position: center center; font-weight: bold; border-width: 1px; border-style: solid; border-color: rgb(217, 217, 217); border-radius: 5px;" id="tab2--cancelBtn" data-listener-click="tab2:onCancelBtnClick">취소</button
         ></div
         ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: calc((100% - 0px) - 100px); position: relative; left: 0px; top: 0px; background-color: rgba(0, 0, 0, 0);" data-sgap-height="1"
-            ><div data-base="AGrid" data-class="AGrid" data-selectable="true" data-clear-rowtmpl="true" data-ver="3301" class="AGrid-Style" data-hide-footer="true" style="width: 100%; height: auto; position: relative; visibility: visible;" data-fullrow-select="true" data-hide-header="1" data-single-select="1" id="tab2--grpGrid" data-listener-select="tab2:onGrpGridSelect"
+            ><div data-base="AGrid" data-class="AGrid" data-selectable="true" data-clear-rowtmpl="true" data-ver="3301" class="AGrid-Style" data-hide-footer="true" style="width: 100%; height: auto; position: relative; visibility: visible;" data-hide-header="1" data-listener-select="tab2:onGrpGridSelect" id="tab2--grpGrid" data-single-select="1" data-fullrow-select="true"
                 ><div class="grid-scroll-area" style=""
                     ><table class="grid-header-table" align="center"
                         ><colgroup
@@ -20,7 +20,7 @@
                         ></colgroup
                         ><thead align="center" class="head-prop" style="display: none;"
                             ><tr height="22px"
-                                ><td>col1</td
+                                ><td style="border-bottom: 1px solid rgb(150, 180, 255);">col1</td
                             ></tr
                         ></thead
                     ></table
@@ -30,12 +30,12 @@
                         ></colgroup
                         ><thead align="center" class="head-prop"
                             ><tr height="0px" style="height: 0px;"
-                                ><td></td
+                                ><td style="border-bottom: 1px solid rgb(150, 180, 255);"></td
                             ></tr
                         ></thead
                         ><tbody align="center" class="body-prop"
                             ><tr height="30"
-                                ><td class="">1,1</td
+                                ><td class="" style="border-color: rgb(150, 180, 255); border-style: solid; border-width: 1px;">1,1</td
                             ></tr
                         ></tbody
                     ></table
@@ -50,7 +50,7 @@
                         ></thead
                         ><tfoot align="center" class="foot-prop" style="display: none;"
                             ><tr height="22px"
-                                ><td>col1</td
+                                ><td style="border-top: 1px solid rgb(150, 180, 255);">col1</td
                             ></tr
                         ></tfoot
                     ></table

@@ -55,6 +55,7 @@ tab2 = class tab2 extends AView
 	onAddGrpClick(comp, info, e)
 	{
         this.grpGrid.clearSelected();       // 기존 선택 해제
+        this.itmsView.element.style.display = 'none';
         this.showGroupInputView('add');     // 그룹 추가 뷰 표시
 	}
 
@@ -76,7 +77,10 @@ tab2 = class tab2 extends AView
     // 관심 그룹 '이름 변경' 버튼 클릭 시 
 	onModifyGrpClick(comp, info, e)
 	{
-        if (!this.grpGrid.getSelectedCells().length) return this.showToast('변경할 그룹을 먼저 선택하세요!');
+        if (!this.grpGrid.getSelectedCells().length) {
+            this.showToast('변경할 그룹을 먼저 선택하세요!');
+            return this.grpName.element.style.display = 'none'; 
+        }
         this.showGroupInputView('modify', this.selectedGrp.data.interGrp); // 기존 이름 포함한 수정 뷰 표시
 	}
 
@@ -152,6 +156,8 @@ tab2 = class tab2 extends AView
         this.grpName.element.style.display = 'block'; // 공통 뷰 표시
         this.groupTextField.setFocus();
         this.groupTextField.setText(groupName); // 필요 시 기존 그룹 이름 설정
+        
+
     }
 
     // 토스트 보여주는 로직
