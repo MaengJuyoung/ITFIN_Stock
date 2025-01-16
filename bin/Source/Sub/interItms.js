@@ -121,6 +121,7 @@ interItms = class interItms extends AView
 
     // 토스트 보여주는 로직
     showToast(message){
+        AToast.single();
         AToast.show(`${message}`);
     }
 }
