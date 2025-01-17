@@ -16,7 +16,7 @@ tab2 = class tab2 extends AView
 	{
 		super.onInitDone()
         this.dropBox.setReadOnly(false);
-        this.setDropBox();
+        
 	}
 
 	onActiveDone(isFirst)
@@ -24,6 +24,7 @@ tab2 = class tab2 extends AView
 		super.onActiveDone(isFirst)
         this.myStock = JSON.parse(localStorage.getItem('myStock'));
 
+        this.setDropBox();
         this.getInterGrp();
         this.grpGrid.clearSelected();
 
@@ -167,13 +168,6 @@ tab2 = class tab2 extends AView
         localStorage.setItem('myStock', JSON.stringify(this.myStock));
         this.dropBox.setEditText('');
         this.loadData();                                            // 종목 그리드 업데이트
-	}
-
-    // 관심종목 선택 시 
-	onItmsGridSelect(comp, info, e)
-	{
-        const index = this.itmsGrid.getRowIndexByInfo(info);
-        console.log("index",index)
 	}
 
     // 관심종목 '삭제' 버튼 클릭 시 

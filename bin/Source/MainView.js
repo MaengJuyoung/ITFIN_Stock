@@ -18,7 +18,7 @@ MainView = class MainView extends AView
         this.allItms = [];
         this.contiKey = '';
         this.getItemInfo();
-        this.getallItms();
+        this.getAllItms();
         this.home.element.style.color = 'blue';
 	}
 
@@ -86,7 +86,8 @@ MainView = class MainView extends AView
     // 탭 메뉴 클릭 시 
 	onTabClick(comp, info, e)
 	{
-        this.selectTab(comp.compId);        
+        this.selectTab(comp.compId);       
+        this.getAllItms();
 	}
 
     // 탭 선택 시 초기화 로직
@@ -166,7 +167,7 @@ MainView = class MainView extends AView
     }
 
     // 모든 종목명 가져오는 로직
-    getallItms(){
+    getAllItms(){
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
         const url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=2700&resultType=json`;

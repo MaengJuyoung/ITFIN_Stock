@@ -28,7 +28,8 @@ tab1 = class tab1 extends AView
         // 탭 활성화 시 관심 종목 데이터 로드 및 렌더링
         this.getMyStock();
         this.renderAllStockItems();
-
+        this.group1.element.style.display = 'none';
+        this.moreBtn.setText('더보기');
 	}
 
     // 조회 날짜, 조회 개수 변경 시 
@@ -173,12 +174,13 @@ tab1 = class tab1 extends AView
 
     // localStorage에 있는 관심 종목들만 배열에 저장하는 로직
     getMyStock(){
+         
+        const uniqueItems = new Set();
         const myStock = JSON.parse(localStorage.getItem('myStock'));
         myStock.forEach((gruopData) => {
-            (gruopData.interItms).forEach(item => {
-                if (!this.interItms.includes(item.itmsNm)) this.interItms.push(item.itmsNm);
-            });
+            (gruopData.interItms).forEach(item => uniqueItems.add(item.itmsNm));
         })
+        this.interItms = [...uniqueItems];
     }
 
     // 라벨에 관심 종목 이름 표시하는 로직
@@ -187,6 +189,13 @@ tab1 = class tab1 extends AView
         const mainGroups = this.group.$ele[0].childNodes;
         const additionalGroups = this.group1.$ele[0].childNodes;
 
+        // 모든 라벨 그룹 초기화
+        [...mainGroups, ...additionalGroups].forEach(group => {
+            while (group.firstChild) {
+                group.removeChild(group.firstChild);
+            }
+        });
+
         // '더보기' 버튼 처리
         this.moreBtn.element.style.display = this.interItms.length > 5 ? 'block' : 'none';
 
@@ -194,11 +203,6 @@ tab1 = class tab1 extends AView
         this.interItms.forEach((data, index) => {
             const targetGroup = index < 5 ? mainGroups[index] : additionalGroups[index - 5];
             if (!targetGroup) return;
-
-            // 기존 라벨 제거
-            while (targetGroup.firstChild) {
-                targetGroup.removeChild(targetGroup.firstChild);
-            }
 
             // 새 라벨 생성 및 추가
             const label = document.createElement('label');
