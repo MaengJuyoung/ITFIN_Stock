@@ -244,6 +244,7 @@ tab2 = class tab2 extends AView
     // 드롭박스에 모든 종목명 추가하는 로직
     setDropBox(){
         const data = this.getContainerView().allItms;
+        console.log("data=",data)
         data.forEach(item => this.dropBox.addItem(`${item.itmsNm}`,`${item.itmsNm}`))
     }
 

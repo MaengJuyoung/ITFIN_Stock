@@ -98,11 +98,13 @@ tab1 = class tab1 extends AView
 
         let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=${numOfRows}&pageNo=${pageNo}&resultType=json&beginBasDt=${formatBeginBasDt}`;
         url += (searchType === '종목명') ? `&likeItmsNm=${searchText}` : `&likeSrtnCd=${searchText}`;
+        console.log("url",url)
 
         $.ajax({
             type: 'GET',
             url: url,
             success: function(result){
+                console.log("result.response.body.totalCount",result.response.body.totalCount)
                 thisObj.grid.showGridMsg(false);
                 if (result.response.body.totalCount === 0) {    
                     AToast.show("3일간 조회된 데이터가 없습니다.")
