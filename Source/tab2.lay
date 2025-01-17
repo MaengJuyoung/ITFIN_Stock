@@ -60,7 +60,7 @@
     ></div
     ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 580px; position: relative; height: 100%; float: right; background-color: rgba(0, 0, 0, 0); padding: 20px;" id="tab2--itms"
         ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: 100%; height: 30px; position: relative; font-size: 20px; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid rgb(217, 217, 217);">관심 종목</label
-        ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: calc((100% - 0px) - 60px); position: relative; left: 0px; top: 0px; background-color: rgba(0, 0, 0, 0); display: none;" data-sgap-height="1" id="tab2--itmsView"
+        ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: calc((100% - 0px) - 60px); position: relative; left: 0px; top: 0px; background-color: rgba(0, 0, 0, 0); display: block;" data-sgap-height="1" id="tab2--itmsView"
             ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 30px; position: relative; left: 0px; background-color: rgba(0, 0, 0, 0); margin-bottom: 10px;"
                 ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 50px; height: 30px; position: relative; background-position: center center; background-color: rgba(0, 0, 0, 0); font-weight: bold; border-width: 1px; border-style: solid; border-color: rgb(217, 217, 217); border-radius: 5px; float: right; font-size: 15px;" id="tab2--addItem" data-listener-click="tab2:onAddItemClick">추가</button
                 ><div data-base="ADropBox" data-class="ADropBox" class="ADropBox-Style" style="width: 250px; height: 30px; position: relative; float: right; margin-right: 5px; border-radius: 5px;" id="tab2--dropBox" data-listener-keyup="tab2:onDropBoxKeyup"
@@ -69,7 +69,7 @@
                 ></div
             ></div
             ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: auto; position: relative; left: 0px; background-color: rgba(0, 0, 0, 0); top: 0px; margin-bottom: 10px; max-height: 500px;"
-                ><div data-base="AGrid" data-class="AGrid" data-selectable="true" data-clear-rowtmpl="true" data-ver="3301" class="AGrid-Style" data-hide-footer="true" style="width: 100%; height: 100%; position: relative; left: 0px; top: 0px; visibility: visible;" id="tab2--itmsGrid" data-fullrow-select="true"
+                ><div data-base="AGrid" data-class="AGrid" data-selectable="true" data-clear-rowtmpl="true" data-ver="3301" class="AGrid-Style" data-hide-footer="true" style="width: 100%; height: 100%; position: relative; left: 0px; top: 0px; visibility: visible;" id="tab2--itmsGrid" data-fullrow-select="true" data-listener-select="tab2:onItmsGridSelect"
                     ><div class="grid-scroll-area" style=""
                         ><table class="grid-header-table" align="center"
                             ><colgroup
@@ -133,6 +133,7 @@
             ><div data-base="AView" data-class="AView" class="AView-Style" style="width: 100%; height: 30px; position: relative; background-color: rgba(0, 0, 0, 0); margin-bottom: 10px;" id="tab2--deleteView"
                 ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 100px; height: 30px; position: relative; background-position: center center; background-color: rgb(237, 237, 237); font-weight: bold; border-width: 1px; border-style: solid; border-color: rgb(217, 217, 217); border-radius: 5px; float: right; font-size: 15px;" id="tab2--deleteItmsAll" data-listener-click="tab2:onDeleteItmsAllClick">전체 삭제</button
                 ><button data-base="AButton" data-class="AButton" class="AButton-Style" style="width: 50px; height: 30px; position: relative; background-position: center center; background-color: rgba(0, 0, 0, 0); font-weight: bold; border-width: 1px; border-style: solid; border-color: rgb(217, 217, 217); border-radius: 5px; float: right; font-size: 15px; margin-right: 5px;" id="tab2--deleteItms" data-listener-click="tab2:onDeleteItmsClick">삭제</button
+                ><label data-base="ALabel" data-class="ALabel" class="ALabel-Style" style="width: auto; height: 30px; position: relative; font-size: 12px; line-height: 30px; font-family: &quot;맑은 고딕&quot;; color: rgb(0, 0, 255); font-weight: bold; margin-left: 5px;">Ctrl 키를 누른 상태로 종목을 선택 시 여러개 삭제 가능</label
             ></div
         ></div
     ></div

@@ -166,25 +166,45 @@ tab2 = class tab2 extends AView
 
         localStorage.setItem('myStock', JSON.stringify(this.myStock));
         this.dropBox.setEditText('');
-        this.getInterGrp();                                                     // 그룹 그리드에 종목 개수 업데이트
-        this.grpGrid.selectCell(this.grpGrid.getRow(this.selectedGrp.index));   // 선택 상태 유지
-        this.loadItmsGrid();                                                    // 종목 그리드 업데이트
+        this.loadData();                                            // 종목 그리드 업데이트
+	}
+
+    // 관심종목 선택 시 
+	onItmsGridSelect(comp, info, e)
+	{
+        const index = this.itmsGrid.getRowIndexByInfo(info);
+        console.log("index",index)
 	}
 
     // 관심종목 '삭제' 버튼 클릭 시 
 	onDeleteItmsClick(comp, info, e)
 	{
+        const selectedItems = this.itmsGrid.getSelectedCells();
+        if (!selectedItems.length) return this.showToast('삭제할 종목을 먼저 선택하세요!');
+        
+        const myStockIndex = this.selectedGrp.index;           // 현재 그룹 인덱스
+        const group = this.myStock[myStockIndex].interItms;    // 현재 그룹의 관심 종목 리스트
 
-		//TODO:edit here
+        // 선택된 항목들의 인덱스를 가져오고 정렬(역순 정렬 필요)
+        const selectedIndexes = selectedItems
+            .map(item => this.itmsGrid.indexOfRow(item))       // 각 선택 항목의 인덱스 추출
+            .sort((a, b) => b - a);                           // 내림차순 정렬
 
+        // 선택된 인덱스를 역순으로 순회하며 삭제
+        selectedIndexes.forEach(index => {
+            group.splice(index, 1);                           // 해당 인덱스에서 항목 삭제
+        });
+
+        localStorage.setItem('myStock', JSON.stringify(this.myStock));
+        this.loadData();                                      // 그리드 데이터 업데이트
 	}
 
     // 관심종목 '전체 삭제' 버튼 클릭 시 
 	onDeleteItmsAllClick(comp, info, e)
 	{
-
-		//TODO:edit here
-
+        this.myStock[this.selectedGrp.index].interItms = [];
+        localStorage.setItem('myStock', JSON.stringify(this.myStock));
+        this.loadData(); 
 	}
 
     /* -------------------------------------------------------- 로직 --------------------------------------------------------*/
@@ -228,12 +248,17 @@ tab2 = class tab2 extends AView
         })
     }
 
-
     // 드롭박스에 모든 종목명 추가하는 로직
     setDropBox(){
         const data = this.getContainerView().allItms;
         data.forEach(item => this.dropBox.addItem(`${item.itmsNm}`,`${item.itmsNm}`))
     }
 
+    // 관심종목 추가 및 삭제 후 데이터 불러오는 로직
+    loadData(){
+        this.getInterGrp();                                                     // 그룹 그리드에 종목 개수 업데이트
+        this.grpGrid.selectCell(this.grpGrid.getRow(this.selectedGrp.index));   // 선택 상태 유지
+        this.loadItmsGrid();        
+    }
 }
 
