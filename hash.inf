@@ -1,8 +1,6 @@
 {
 	"changed": [
-		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\MainView.js",
-		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\Sub\\tab1.js",
-		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\MainView.html"
+		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\Sub\\tab2.js"
 	],
 	"version": "4.1.3",
 	"C:\\Users\\IT_98\\AppData\\Local\\Programs\\SpiderGen4\\resources\\app\\bin\\Runner\\SpiderServer\\..\\..\\Framework\\afc\\library\\jquery-core.js": 1720750564000,
@@ -191,15 +189,15 @@
 	"C:\\Users\\IT_98\\AppData\\Local\\Programs\\SpiderGen4\\resources\\app\\bin\\Runner\\SpiderServer\\..\\..\\Framework\\afc\\style\\jquery-ui.css": 1720750564000,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Assets\\itfin_logo.png": 1736308327823.2195,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\stock_mjyApp.js": 1736299103554.115,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.js": 1737087961989.7207,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.js": 1737091667458.7998,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Resource\\common.json": 1736299103508.6333,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Template\\stock_mjyApp_global.stl": 1736299103560.5857,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.lay": 1737087951699.2944,
 	"concat": true,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab1.js": 1737087944894.579,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab2.js": 1737071650382.7053,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab1.js": 1737091849849.6416,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab2.js": 1737093098934.6382,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab1.lay": 1737087864414.176,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab2.lay": 1737017651779.361,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab2.lay": 1737089733464.9792,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Template\\Theme\\bunttonOver.stl": 1736467663997.4639,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Template\\button-active.stl": 1736469805151.4724,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\interItms.js": 1737015950754.569,

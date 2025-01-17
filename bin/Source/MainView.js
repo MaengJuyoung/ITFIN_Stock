@@ -41,7 +41,7 @@ MainView = class MainView extends AView
         
         // localStorage에서 'myStock' 값을 가져오고, 없다면 기본값 설정
         let myStock = JSON.parse(localStorage.getItem('myStock'));
-        if (!myStock.length) {
+        if (!myStock) {
             // 데이터가 없다면 기본값으로 설정
             myStock = [
                 {
@@ -125,7 +125,6 @@ MainView = class MainView extends AView
             type: 'GET',
             url: url,
             success: function(result){
-                console.log("result=",result.response)
                 thisObj.data.items = result.response.body.items.item;   // result 결과 전역 변수에 저장
                 thisObj.getTabData();                                   // 그리드에 데이터 추가하는 함수 호출
             },
@@ -154,8 +153,8 @@ MainView = class MainView extends AView
         grid.removeAll(); 
         grid.showGridMsg(false);
 
-        if (this.data.searchText === '특수문자') AToast.show("특수문자는 입력할 수 없습니다.");
-        if (this.data.items.length === 0) return grid.showGridMsg(true);
+        if (this.data.searchText === '특수문자') AToast.show("특수문자는 입력할 수 없습니다.");     // 특수문자 포함된 경우
+        if (this.data.items.length === 0) return grid.showGridMsg(true);                           // 검색 결과가 없는 경우
         
         grid.scrollToTop();                     // 스크롤 맨 위로             
         this.data.items.forEach((item) => {     // 데이터 추가
