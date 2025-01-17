@@ -12,9 +12,7 @@ tab1 = class tab1 extends AView
 
         this.data = this.getContainerView().data;
         this.interItms = [];
-        this.pageNo = 1;
         this.numOfRows.selectItemByValue(100);
-        this.label.element.style.display = 'none';
 	}
 
 	onInitDone()
@@ -26,6 +24,7 @@ tab1 = class tab1 extends AView
 	onActiveDone(isFirst)
 	{
 		super.onActiveDone(isFirst);
+
         // 탭 활성화 시 관심 종목 데이터 로드 및 렌더링
         this.getMyStock();
         this.renderAllStockItems();
@@ -35,7 +34,7 @@ tab1 = class tab1 extends AView
     // 조회 날짜, 조회 개수 변경 시 
     onChange(comp, info, e)
 	{
-        this.pageNo = 0;                // pageNo 초기화 
+        this.data.pageNo = 0;                // pageNo 초기화 
         this.contiKey.element.style.display = 'block';
 	}
 
@@ -44,9 +43,7 @@ tab1 = class tab1 extends AView
 	{
         const thisObj = this;     
         if (thisObj.data.items.length === 0) return;    // 검색된 데이터가 없을 때
-
-        thisObj.grid.scrollToTop();                     // 조회 버튼 클릭 시, 스크롤 맨 위로 이동
-        thisObj.pageNo = 1;                             // pageNo 셋팅
+        this.data.pageNo = 1;                           // pageNo 초기화 
         thisObj.contiKey.element.style.display = 'block';
         thisObj.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue())
         
@@ -56,11 +53,9 @@ tab1 = class tab1 extends AView
     onContiKeyClick(comp, info, e)
 	{
         const thisObj = this;     
-        if (thisObj.data.items.length === 0) return;            // 검색된 데이터가 없을 때
-
-        if (thisObj.pageNo == 0) thisObj.grid.scrollToTop();    // 다음 버튼 처음 클릭 시, 스크롤 맨 위로 이동
-        let pageNo = ++thisObj.pageNo;                          // pageNo 1씩 증가
-        this.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue(), pageNo)
+        if (thisObj.data.items.length === 0) return;                // 검색된 데이터가 없을 때
+        const pageNo = ++thisObj.data.pageNo;
+        this.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue(), pageNo);
 	}
 
     // 그리드 스크롤 끝까지 내려가면 자동 조회 
@@ -85,21 +80,20 @@ tab1 = class tab1 extends AView
 	onMoreBtnClick(comp, info, e)
 	{
         const isMore = e.target.innerText === '더보기';
-
-        // '더보기'와 '닫기' 상태 전환
         this.group1.element.style.display = isMore ? 'block' : 'none';
         this.moreBtn.setText(isMore ? '닫기' : '더보기');
-
         this.renderAllStockItems();
 	}    
 
     // API 통신 로직
-    getItemInfo(beginBasDt='', numOfRows='', pageNo='1'){
+    getItemInfo(beginBasDt='', numOfRows='', pageNo=1){
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
         const searchType = thisObj.getContainerView().data.searchType;      // 메인에서 넘어온 검색 구분
         const searchText = thisObj.getContainerView().data.searchText;      // 메인에서 넘어온 검색어
         const formatBeginBasDt = thisObj.formatBasDate(beginBasDt);         // 날짜 포맷
+        if (pageNo == 1) thisObj.grid.scrollToTop();                        // 첫 페이지 조회 시, 그리드 스크롤 맨 위로 이동
+
 
         let url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=${numOfRows}&pageNo=${pageNo}&resultType=json&beginBasDt=${formatBeginBasDt}`;
         url += (searchType === '종목명') ? `&likeItmsNm=${searchText}` : `&likeSrtnCd=${searchText}`;
@@ -108,9 +102,14 @@ tab1 = class tab1 extends AView
             type: 'GET',
             url: url,
             success: function(result){
-                console.log("result.response.body",result.response.body)
+                thisObj.grid.showGridMsg(false);
+                if (result.response.body.totalCount === 0) {    
+                    AToast.show("3일간 조회된 데이터가 없습니다.")
+                    thisObj.grid.removeAll();
+                    thisObj.grid.showGridMsg(true);
+                    return;
+                } 
                 const searchData = result.response.body.items.item;
-                thisObj.updateLabel(result.response.body.totalCount);       // 검색결과에 따라 라벨 처리하는 함수 호출
                 thisObj.addDataAtGrid(searchData);
                 if (searchData.length < numOfRows || result.response.body.totalCount == numOfRows) {
                     thisObj.contiKey.element.style.display = 'none';        // 불러올 데이터가 없으면 다음 버튼 숨기기
@@ -139,20 +138,11 @@ tab1 = class tab1 extends AView
             .padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
     }
 
-    // 라벨 업데이트 로직
-    updateLabel(totalCount) {
-        const thisObj = this;
-        if (totalCount === 0){                              // 특수문자 입력 및 조회 데이터 없을 경우 라벨 표시 
-            thisObj.label.element.style.display = 'block';
-            thisObj.grid.removeAll();
-        } else thisObj.label.element.style.display = 'none'; // 조회 데이터 있을 경우 라벨 없애고 그리드에 데이터 추가
-    }
-
     // 그리드에 데이터 추가 로직
-    addDataAtGrid(data){
-        const items = data;
+    addDataAtGrid(searchData){
+        const items = searchData;
         if (items){
-            if (this.pageNo == 1) this.grid.removeAll();
+            if (this.data.pageNo <= 1) this.grid.removeAll();
             for(var i = 0; i < items.length; i++){
                 this.grid.addRow([
                     items[i].basDt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),        // 날짜 마스킹 처리하여 그리드 추가 
