@@ -9,7 +9,6 @@ tab2 = class tab2 extends AView
 	init(context, evtListener)
 	{
 		super.init(context, evtListener)      
-        this.allItms=[];  
 	}
 
 	onInitDone()

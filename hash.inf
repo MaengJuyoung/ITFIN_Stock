@@ -1,7 +1,6 @@
 {
 	"changed": [
-		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\MainView.js",
-		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\Sub\\tab2.js"
+		"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\bin\\Source\\MainView.js"
 	],
 	"version": "4.1.3",
 	"C:\\Users\\IT_98\\AppData\\Local\\Programs\\SpiderGen4\\resources\\app\\bin\\Runner\\SpiderServer\\..\\..\\Framework\\afc\\library\\jquery-core.js": 1720750564000,
@@ -190,13 +189,13 @@
 	"C:\\Users\\IT_98\\AppData\\Local\\Programs\\SpiderGen4\\resources\\app\\bin\\Runner\\SpiderServer\\..\\..\\Framework\\afc\\style\\jquery-ui.css": 1720750564000,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Assets\\itfin_logo.png": 1736308327823.2195,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\stock_mjyApp.js": 1736299103554.115,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.js": 1737097995148.114,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.js": 1737103036384.248,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Resource\\common.json": 1736299103508.6333,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Template\\stock_mjyApp_global.stl": 1736299103560.5857,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\MainView.lay": 1737087951699.2944,
 	"concat": true,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab1.js": 1737097398321.6167,
-	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab2.js": 1737097909029.1604,
+	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab2.js": 1737101873627.2092,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab1.lay": 1737087864414.176,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Source\\tab2.lay": 1737095391106.2646,
 	"C:\\Users\\IT_98\\Documents\\SpiderGenWorkspace\\stock_mjy\\Template\\Theme\\bunttonOver.stl": 1736467663997.4639,
