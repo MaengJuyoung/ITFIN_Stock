@@ -85,9 +85,8 @@ MainView = class MainView extends AView
 	onSearchBoxKeyup(comp, info, e)
 	{
         if ( e.key === 'Enter' ) {
-            console.log("입력 값 = ",this.searchBox.getEditText());
             this.onSearchClick();
-            this.searchBox.listPopupClose()
+            this.searchBox.listPopupClose();
         }
 	}
 
@@ -101,7 +100,6 @@ MainView = class MainView extends AView
 	onTabClick(comp, info, e)
 	{
         this.selectTab(comp.compId);       
-        //this.getAllItms();
 	}
 
     // 탭 선택 시 초기화 로직
@@ -185,13 +183,12 @@ MainView = class MainView extends AView
     getAllItms(){
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
-        const url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=2750&resultType=json`;
+        const url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=2750&resultType=json&basDt=20250110`;
 
         $.ajax({
             type: 'GET',
             url: url,
             success: function(result){ 
-                console.log("result", result);
                 const items = result.response.body.items.item; 
                 const uniqueItems = items.filter((item, index, array) =>{               // 중복 제거 로직 
                     return array.findIndex(i => i.itmsNm === item.itmsNm) === index;    // 현재 항목의 `itmsNm` 값이 배열에서 처음 등장한 인덱스와 동일한지 확인하여 중복된 항목을 제거

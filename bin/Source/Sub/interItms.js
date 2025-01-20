@@ -5,12 +5,12 @@ interItms = class interItms extends AView
 	{
 		super()
         this.data = null; 
+        AToast.single();
 	}
 
 	init(context, evtListener)
 	{
 		super.init(context, evtListener)
-
         this.interGrpSelectBox();
         
 	}
@@ -19,7 +19,6 @@ interItms = class interItms extends AView
 	{
 		super.onInitDone()
         this.data = this.getContainer().data;
-
         this.itmsNm.setText(this.data.itmsNm);
         this.mrktCtg.setText(this.data.mrktCtg);
         this.srtnCd.setText(this.data.srtnCd);
@@ -41,23 +40,22 @@ interItms = class interItms extends AView
     onAddBtnClick(comp, info, e)
     {
         const thisObj = this;
-        const myStock = JSON.parse(localStorage.getItem('myStock'));
+        const myStock = thisObj.getMyStock();
 
         // 선택된 그룹의 인덱스 가져오기
         const index = thisObj.interGrp.getSelectedIndex();
         const group = myStock[index].interItms;
 
-        
-        if (group.includes(this.data.itmsNm)) {  // 이미 저장되어 있는지 확인
+        const isDuplicate = group.some(item => item.itmsNm === this.data.itmsNm);
+        if (isDuplicate) {
             return thisObj.showToast("이미 관심 종목에 추가되어 있습니다.");
         }
 
+        // 새로운 종목 추가 및 업데이트
         group.push({srtnCd : this.data.srtnCd, itmsNm :this.data.itmsNm, mrktCtg :this.data.mrktCtg });
-
-        // 업데이트된 데이터를 다시 저장
-        localStorage.setItem("myStock", JSON.stringify(myStock));
+        thisObj.setMyStock(myStock);
         thisObj.showToast("관심 종목에 추가되었습니다!");
-        this.getContainer().close(1);
+        thisObj.getContainer().close(1);
     }
 
     // '그룹 추가' 버튼, 그룹 추가 '취소' 버튼 클릭 시 
@@ -90,7 +88,7 @@ interItms = class interItms extends AView
             return;
         }
 
-        const myStock = JSON.parse(localStorage.getItem('myStock'));
+        const myStock = thisObj.getMyStock();
 
         // 그룹 이름 중복 확인
         const isDuplicate = myStock.some(grp => grp.interGrp === groupName);
@@ -100,13 +98,12 @@ interItms = class interItms extends AView
             return;
         }
 
-        // 새로운 그룹 추가
+        // 새로운 그룹 추가 및 업데이트
         myStock.push({ interGrp: groupName, interItms: [] });
+        thisObj.setMyStock(myStock);
         thisObj.groupTextField.setText(""); // 입력 필드 초기화
         thisObj.addGroupView.element.style.display = 'none';
-
-        localStorage.setItem("myStock", JSON.stringify(myStock)); // 로컬 스토리지에 저장
-        this.interGrpSelectBox(); // 그룹 리스트 갱신
+        thisObj.interGrpSelectBox(); // 그룹 리스트 갱신
         thisObj.showToast("새로운 그룹이 추가되었습니다.");
     }
 
@@ -114,15 +111,22 @@ interItms = class interItms extends AView
     interGrpSelectBox(){
         const myStock = JSON.parse(localStorage.getItem('myStock'));
         this.interGrp.removeAll();
-        myStock.forEach(interGrps => {
-            this.interGrp.addItem(interGrps.interGrp);
-        })
+        myStock.forEach(interGrps => this.interGrp.addItem(interGrps.interGrp));
     }
 
-    // 토스트 보여주는 로직
+    // 로컬 스토리지에서 데이터 읽는 로직
+    getMyStock() {
+        return JSON.parse(localStorage.getItem('myStock')) || [];
+    }
+
+    // 로컬 스토리지에 데이터 저장하는 로직
+    setMyStock(data) {
+        localStorage.setItem('myStock', JSON.stringify(data));
+    }
+
+    // 토스트 메시지 표시하는 로직
     showToast(message){
-        AToast.single();
-        AToast.show(`${message}`);
+        AToast.show(message);
     }
 }
 
