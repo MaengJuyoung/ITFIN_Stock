@@ -27,7 +27,6 @@ interItms = class interItms extends AView
 	onActiveDone(isFirst)
 	{
 		super.onActiveDone(isFirst)
-
 	}
 
     // MY STOCK '닫기' 버튼 클릭 시 

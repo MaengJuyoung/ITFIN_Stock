@@ -34,28 +34,26 @@ tab1 = class tab1 extends AView
     // 조회 날짜, 조회 개수 변경 시 
     onChange(comp, info, e)
 	{
-        this.data.pageNo = 0;                // pageNo 초기화 
+        this.data.pageNo = 0;                           // pageNo 초기화 
         this.contiKey.element.style.display = 'block';
 	}
 
     // 조회 버튼 클릭 시 
 	onTabBtnClick(comp, info, e)
 	{
-        const thisObj = this;     
-        if (thisObj.data.items.length === 0) return;    // 검색된 데이터가 없을 때
+        if (this.data.items.length === 0) return;    // 검색된 데이터가 없을 때
         this.data.pageNo = 1;                           // pageNo 초기화 
-        thisObj.contiKey.element.style.display = 'block';
-        thisObj.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue())
+        this.contiKey.element.style.display = 'block';
+        this.getItemInfo(this.beginBasDt.getSelectValue(), this.numOfRows.getSelectedItemValue())
         
 	}
 
     // 다음 버튼 클릭 시 
     onContiKeyClick(comp, info, e)
 	{
-        const thisObj = this;     
-        if (thisObj.data.items.length === 0) return;                // 검색된 데이터가 없을 때
-        const pageNo = ++thisObj.data.pageNo;
-        this.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue(), pageNo);
+        if (this.data.items.length === 0) return;   // 검색된 데이터가 없을 때
+        const pageNo = ++this.data.pageNo;
+        this.getItemInfo(this.beginBasDt.getSelectValue(), this.numOfRows.getSelectedItemValue(), pageNo);
 	}
 
     // 그리드 스크롤 끝까지 내려가면 자동 조회 
@@ -67,11 +65,10 @@ tab1 = class tab1 extends AView
     // 그리드 선택 시, 선택된 항목의 종목명, 시장구분, 코드 저장하는 로직
 	onGridSelect(comp, info, e)
 	{
-        const thisObj = this;
-        const index = thisObj.grid.getRowIndexByInfo(info);
+        const index = this.grid.getRowIndexByInfo(info);
         if (index == -1) return;
 
-        const data = thisObj.grid.getDataByOption(info);
+        const data = this.grid.getDataByOption(info);
         const interdata = { itmsNm: data[1], mrktCtg: data[2], srtnCd: data[6] }
         this.openDialog(interdata);
 	}
@@ -89,8 +86,7 @@ tab1 = class tab1 extends AView
     getItemInfo(beginBasDt='', numOfRows='', pageNo=1){
         const thisObj = this;
         const serviceKey = 'iLRN%2FNmqT6sKaIKpIX5W2XnVJYAkR2Ygqxhs6ep8RKbiSEa1TLSsmhRhFTp8o3iCCCOvKfJXIva2pRivDOuFuw%3D%3D'; // 일반 인증키
-        const searchType = thisObj.getContainerView().data.searchType;      // 메인에서 넘어온 검색 구분
-        const searchText = thisObj.getContainerView().data.searchText;      // 메인에서 넘어온 검색어
+        const { searchType, searchText } = this.data;
         const formatBeginBasDt = thisObj.formatBasDate(beginBasDt);         // 날짜 포맷
         if (pageNo == 1) thisObj.grid.scrollToTop();                        // 첫 페이지 조회 시, 그리드 스크롤 맨 위로 이동
 
@@ -103,20 +99,19 @@ tab1 = class tab1 extends AView
             url: url,
             success: function(result){
                 thisObj.grid.showGridMsg(false);
-                if (result.response.body.totalCount === 0) {    
+                const { totalCount, items } = result.response.body;
+
+                if (totalCount === 0) {    
                     AToast.show("3일간 조회된 데이터가 없습니다.")
                     thisObj.grid.removeAll();
                     thisObj.grid.showGridMsg(true);
                     return;
                 } 
-                const searchData = result.response.body.items.item;
-                thisObj.addDataAtGrid(searchData);
-                if (searchData.length < numOfRows || result.response.body.totalCount == numOfRows) {
+                
+                thisObj.addDataAtGrid(items.item);
+                if (items.item.length < numOfRows || totalCount == numOfRows) {
                     thisObj.contiKey.element.style.display = 'none';        // 불러올 데이터가 없으면 다음 버튼 숨기기
-                    const scrollEvent = new CustomEvent('scrollToBottom', { // 탭에서 메인으로 스크롤 요청 이벤트 전송
-                        detail: { tab: 'home' }
-                    });
-                    window.dispatchEvent(scrollEvent);
+                    thisObj.dispatchScrollEvent();                          // 탭에서 메인으로 스크롤 요청 이벤트 전송
                 }
             },
             error: function(error){
@@ -139,17 +134,14 @@ tab1 = class tab1 extends AView
     }
 
     // 그리드에 데이터 추가 로직
-    addDataAtGrid(searchData){
-        const items = searchData;
-        if (items){
-            if (this.data.pageNo <= 1) this.grid.removeAll();
-            for(var i = 0; i < items.length; i++){
-                this.grid.addRow([
-                    items[i].basDt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),        // 날짜 마스킹 처리하여 그리드 추가 
-                    items[i].itmsNm, items[i].mrktCtg, items[i].isinCd, items[i].corpNm, items[i].crno, items[i].srtnCd
-                ])
-            }
-        }
+    addDataAtGrid(items){
+        if (this.data.pageNo <= 1) this.grid.removeAll();
+        items.forEach(item => {
+            this.grid.addRow([
+                item.basDt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
+                item.itmsNm, item.mrktCtg, item.isinCd, item.corpNm, item.crno, item.srtnCd
+            ]);
+        });
     }
 
     // 관심종목 추가 창 열기
@@ -173,7 +165,6 @@ tab1 = class tab1 extends AView
 
     // localStorage에 있는 관심 종목들만 배열에 저장하는 로직
     getMyStock(){
-         
         const uniqueItems = new Set();
         const myStock = JSON.parse(localStorage.getItem('myStock'));
         myStock.forEach((gruopData) => {
@@ -188,12 +179,8 @@ tab1 = class tab1 extends AView
         const mainGroups = this.group.$ele[0].childNodes;
         const additionalGroups = this.group1.$ele[0].childNodes;
 
-        // 모든 라벨 그룹 초기화
-        [...mainGroups, ...additionalGroups].forEach(group => {
-            while (group.firstChild) {
-                group.removeChild(group.firstChild);
-            }
-        });
+        // 모든 라벨 그룹 초기화, 기존 자식 노드를 새로운 노드로 교체
+        [...mainGroups, ...additionalGroups].forEach(group => group.replaceChildren());
 
         // '더보기' 버튼 처리
         this.moreBtn.element.style.display = this.interItms.length > 5 ? 'block' : 'none';
@@ -210,14 +197,20 @@ tab1 = class tab1 extends AView
                 width: 100%; 
                 height: auto; 
                 position: relative; 
-                left: 0; 
-                top: 0; 
-                font-weight: normal; 
                 display: block;
             `;
             label.textContent = data; // 종목 이름 설정
             targetGroup.appendChild(label);
         });
+    }
+
+    // 스크롤 요청 이벤트 로직
+    dispatchScrollEvent(){
+        window.dispatchEvent(
+            new CustomEvent('scrollToBottom', { 
+                detail: { tab: 'home' }
+            })
+        );
     }
 }
 
