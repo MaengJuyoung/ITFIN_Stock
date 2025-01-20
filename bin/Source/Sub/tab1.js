@@ -34,28 +34,26 @@ tab1 = class tab1 extends AView
     // 조회 날짜, 조회 개수 변경 시 
     onChange(comp, info, e)
 	{
-        this.data.pageNo = 0;                // pageNo 초기화 
+        this.data.pageNo = 0;                           // pageNo 초기화 
         this.contiKey.element.style.display = 'block';
 	}
 
     // 조회 버튼 클릭 시 
 	onTabBtnClick(comp, info, e)
 	{
-        const thisObj = this;     
-        if (thisObj.data.items.length === 0) return;    // 검색된 데이터가 없을 때
+        if (this.data.items.length === 0) return;    // 검색된 데이터가 없을 때
         this.data.pageNo = 1;                           // pageNo 초기화 
-        thisObj.contiKey.element.style.display = 'block';
-        thisObj.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue())
+        this.contiKey.element.style.display = 'block';
+        this.getItemInfo(this.beginBasDt.getSelectValue(), this.numOfRows.getSelectedItemValue())
         
 	}
 
     // 다음 버튼 클릭 시 
     onContiKeyClick(comp, info, e)
 	{
-        const thisObj = this;     
-        if (thisObj.data.items.length === 0) return;                // 검색된 데이터가 없을 때
-        const pageNo = ++thisObj.data.pageNo;
-        this.getItemInfo(thisObj.beginBasDt.getSelectValue(), thisObj.numOfRows.getSelectedItemValue(), pageNo);
+        if (this.data.items.length === 0) return;   // 검색된 데이터가 없을 때
+        const pageNo = ++this.data.pageNo;
+        this.getItemInfo(this.beginBasDt.getSelectValue(), this.numOfRows.getSelectedItemValue(), pageNo);
 	}
 
     // 그리드 스크롤 끝까지 내려가면 자동 조회 
@@ -67,11 +65,10 @@ tab1 = class tab1 extends AView
     // 그리드 선택 시, 선택된 항목의 종목명, 시장구분, 코드 저장하는 로직
 	onGridSelect(comp, info, e)
 	{
-        const thisObj = this;
-        const index = thisObj.grid.getRowIndexByInfo(info);
+        const index = this.grid.getRowIndexByInfo(info);
         if (index == -1) return;
 
-        const data = thisObj.grid.getDataByOption(info);
+        const data = this.grid.getDataByOption(info);
         const interdata = { itmsNm: data[1], mrktCtg: data[2], srtnCd: data[6] }
         this.openDialog(interdata);
 	}
