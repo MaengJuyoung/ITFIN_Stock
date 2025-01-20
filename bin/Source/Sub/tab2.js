@@ -15,7 +15,7 @@ tab2 = class tab2 extends AView
 	{
 		super.onInitDone()
         this.dropBox.setReadOnly(false);
-        
+        this.setDropBox();
 	}
 
 	onActiveDone(isFirst)
@@ -23,7 +23,7 @@ tab2 = class tab2 extends AView
 		super.onActiveDone(isFirst)
         this.myStock = JSON.parse(localStorage.getItem('myStock'));
 
-        this.setDropBox();
+        
         this.getInterGrp();
         this.grpGrid.clearSelected();
 
@@ -244,7 +244,6 @@ tab2 = class tab2 extends AView
     // 드롭박스에 모든 종목명 추가하는 로직
     setDropBox(){
         const data = this.getContainerView().allItms;
-        console.log("data=",data)
         data.forEach(item => this.dropBox.addItem(`${item.itmsNm}`,`${item.itmsNm}`))
     }
 

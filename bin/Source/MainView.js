@@ -33,6 +33,9 @@ MainView = class MainView extends AView
                 behavior: 'smooth'
             });
         });
+
+        this.searchBox.setReadOnly(false);
+
 	}
 
 	onActiveDone(isFirst)
@@ -61,7 +64,8 @@ MainView = class MainView extends AView
         const invalidChars = /[`~!@#$%^&*()_\-+=\[\]{};:'",<>?\\|/]/;       // 특수문자 검사 
         
         const searchType = thisObj.searchType.getSelectedItemText();
-        const searchText = invalidChars.test(thisObj.searchText.getText())? '특수문자' : thisObj.searchText.getText();
+        //const searchText = invalidChars.test(thisObj.searchText.getText())? '특수문자' : thisObj.searchText.getText();
+        const searchText = invalidChars.test(thisObj.searchBox.getEditText())? '특수문자' : thisObj.searchBox.getEditText();
 
         // 탭에 값 넘기기 위해 전역변수에 저장
         thisObj.data.searchType = searchType;
@@ -77,6 +81,16 @@ MainView = class MainView extends AView
         if ( e.key === 'Enter' ) this.onSearchClick();
 	}
 
+    // dropBox 검색창 입력 후 엔터 클릭 시 
+	onSearchBoxKeyup(comp, info, e)
+	{
+        if ( e.key === 'Enter' ) {
+            console.log("입력 값 = ",this.searchBox.getEditText())
+            this.onSearchClick();
+            this.searchBox.listPopupClose()
+        }
+	}
+
     // 로고 클릭 시 
 	onLogoClick(comp, info, e)
 	{
@@ -87,7 +101,7 @@ MainView = class MainView extends AView
 	onTabClick(comp, info, e)
 	{
         this.selectTab(comp.compId);       
-        this.getAllItms();
+        //this.getAllItms();
 	}
 
     // 탭 선택 시 초기화 로직
@@ -104,7 +118,8 @@ MainView = class MainView extends AView
             thisObj.getItemInfo(thisObj.data.searchType, thisObj.data.searchText);
         }else {
             // 검색창 초기화
-            thisObj.searchText.setText('');
+            //thisObj.searchText.setText('');
+            thisObj.searchBox.setEditText('');
             thisObj.data.searchType = '';
             thisObj.data.searchText = '';
             if (tabId == 'home') {
@@ -176,14 +191,23 @@ MainView = class MainView extends AView
             type: 'GET',
             url: url,
             success: function(result){ 
+                console.log("result", result);
                 const items = result.response.body.items.item; 
                 const uniqueItems = items.filter((item, index, array) =>{               // 중복 제거 로직 
                     return array.findIndex(i => i.itmsNm === item.itmsNm) === index;    // 현재 항목의 `itmsNm` 값이 배열에서 처음 등장한 인덱스와 동일한지 확인하여 중복된 항목을 제거
                 })
                 thisObj.allItms = uniqueItems;                                          // 중복 제거된 항목 배열을 객체의 속성으로 저장
+                thisObj.setSearchBox();
         },
             error: function(error){ console.error(error);}
         })
     }
+
+    // 드롭박스에 모든 종목명 추가하는 로직
+    setSearchBox(){
+        const data = this.allItms;
+        data.forEach(item => this.searchBox.addItem(`${item.itmsNm}`,`${item.itmsNm}`))
+    }
+
 }
 

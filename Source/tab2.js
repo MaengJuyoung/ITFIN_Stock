@@ -15,7 +15,7 @@ tab2 = class tab2 extends AView
 	{
 		super.onInitDone()
         this.dropBox.setReadOnly(false);
-        
+        this.setDropBox();
 	}
 
 	onActiveDone(isFirst)
@@ -23,7 +23,7 @@ tab2 = class tab2 extends AView
 		super.onActiveDone(isFirst)
         this.myStock = JSON.parse(localStorage.getItem('myStock'));
 
-        this.setDropBox();
+        
         this.getInterGrp();
         this.grpGrid.clearSelected();
 

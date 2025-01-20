@@ -18,7 +18,6 @@ tab1 = class tab1 extends AView
 	onInitDone()
 	{
 		super.onInitDone()
-        this.renderAllStockItems();
 	}
 
 	onActiveDone(isFirst)
